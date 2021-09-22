@@ -1,7 +1,5 @@
 # bedrock-api
-Aqui vou organizar meus estudos sobre segurança fazendo um backend mais seguro para o Knowledge Club da aftersale
+Aqui vou organizar meus estudos sobre segurança e trabalhar em um backend mais seguro.
 
 
 ## Links de estudo:
-
-em breve...
