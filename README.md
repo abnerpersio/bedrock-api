@@ -26,3 +26,7 @@ I will organize documents about each question and its responses, trying to teach
 - [ ] How E2E cryptography works
 - [ ] Is it possible to work with E2E in this app?
 - [ ] What more modules can I add to the app for better security exploration?
+
+### Work in progress
+
+See what is happening and my newest changes at the branch `develop` 
