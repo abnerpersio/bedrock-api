@@ -1,5 +1,3 @@
 # bedrock-api
-Aqui vou organizar meus estudos sobre segurança e trabalhar em um backend mais seguro.
 
-
-### Links de estudo:
+I want to learn more about security as a backend developer. So i am going to organize and describe all about my learning.
