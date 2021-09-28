@@ -8,10 +8,10 @@ Make a password keeper api.
 
 ### Techs:
 
-- [ ] Typescript
-- [ ] Express
-- [ ] Postgres or MongoDB
-- [ ] Docker
+- Typescript
+- Express
+- Postgres or MongoDB
+- Docker
 
 ### To study
 
