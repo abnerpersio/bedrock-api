@@ -30,3 +30,7 @@ I will organize documents about each question and its responses, trying to teach
 ### Work in progress
 
 See what is happening and my newest changes at the `develop` branch
+
+### See my notes at Notion:
+
+[Click here to read my notes](https://abnerpersio.notion.site/Notas-bedrock-api-3a1749e12b294bc7894007ea3dc8db2f)
