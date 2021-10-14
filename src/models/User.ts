@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       set: (pass: string) => hash(pass),
+      select: false,
     },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } },

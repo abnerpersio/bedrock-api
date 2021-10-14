@@ -6,10 +6,10 @@ const userController = new UserController();
 
 const routes = Router();
 
-routes.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Everything is ok here' });
+routes.get('ping', (req: Request, res: Response) => {
+  res.json({ success: true, message: 'Everything is ok here' });
 });
 
-routes.get('/users', userController.index);
+routes.post('/users', userController.store);
 
 export default routes;
