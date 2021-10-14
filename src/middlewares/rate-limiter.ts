@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import { LIMIT_REQUESTS_BY_SECOND } from '../config/bootstrap';
 import MemoryIPStore from '../utils/memory-ip-store';
 
 const options = {
   windowMs: 60 * 1000,
-  max: 5,
+  max: parseInt(LIMIT_REQUESTS_BY_SECOND, 10) || 5,
   message: 'Too many requests, please try again later.',
   statusCode: 429,
 };

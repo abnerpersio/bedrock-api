@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 
 import { UserController } from './controllers/UserController';
+import AuthMiddleware from './middlewares/auth';
 
 const userController = new UserController();
 
@@ -11,5 +12,11 @@ routes.get('ping', (req: Request, res: Response) => {
 });
 
 routes.post('/users', userController.store);
+routes.post('/login', userController.login);
+
+routes.use(AuthMiddleware);
+
+routes.get('/users', userController.index);
+routes.delete('/users', userController.delete);
 
 export default routes;

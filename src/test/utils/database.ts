@@ -11,17 +11,6 @@ export const connectDatabase = async () => {
   );
 };
 
-export const cleanDatabaseCollections = async () => {
-  const { db } = mongoose.connection;
-  const collections = await db?.listCollections().toArray();
-
-  collections
-    .map((collection) => collection.name)
-    .forEach(async (collectionName) => {
-      await db?.dropCollection(collectionName);
-    });
-};
-
 export const cleanDatabaseAndClose = async () => {
   await mongoose.connection.db?.dropDatabase();
   await mongoose.connection.close();
