@@ -1,0 +1,52 @@
+version: "3.0"
+
+services:
+  api:
+    build:
+      dockerfile: ./.docker/api/Dockerfile
+      context: .
+    ports:
+      - "8080:80"
+    environment:
+      PORT: 80
+      DB_URI: mongodb://mongo
+      DB_USER: root
+      DB_PASS: root
+      JWT_SECRET: jwt_secret
+      LIMIT_REQUESTS_BY_SECOND: 10
+    networks:
+      default:
+        aliases:
+          - api
+
+  nginx: 
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+    networks:
+      - default
+
+  mongo: 
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_DATABASE: bedrockapi
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-volume:/data/db
+    networks:
+      default:
+        aliases:
+          - mongo
+
+networks:
+  default:
+
+volumes:
+  mongo-volume:

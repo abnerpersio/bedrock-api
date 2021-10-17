@@ -3,4 +3,6 @@ import './config/bootstrap';
 
 import app from './server';
 
-app.listen(3000, () => console.log('Server is running at http://localhost:3000'));
+const { PORT } = process.env;
+
+app.listen(PORT || 3000, () => console.log(`Server is running at http://localhost:${PORT}`));

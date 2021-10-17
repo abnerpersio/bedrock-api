@@ -1,32 +1,44 @@
 # bedrock-api
 
-I want to learn more about security as a backend developer. So i am going to organize and describe all about my learning.
+### How to run the project
 
-### Main idea (for now):
+#### With docker:
 
-Make a password keeper api.
+Configure enviroment variables in `docker-compose.yaml` file in `api` and `mongo` sections
 
-### Techs:
+Run `docker-compose up`
 
-- [ ] Typescript
-- [ ] Express
-- [ ] Postgres or MongoDB
-- [ ] Docker
+**See the magic happening :)**
 
-### To study
+##### Without docker
 
-I will organize documents about each question and its responses, trying to teach what I learned. 
+**Requirements:**
 
-- [x] How to use nmap to discover ports running  
-- [ ] What exactly is Metasploit
-- [ ] How to use Metasploit
-- [ ] How to try penetrate a Node.JS server
-- [ ] Wich authentication method is more secure?
-- [ ] How to implement the authentication method
-- [ ] How E2E cryptography works
-- [ ] Is it possible to work with E2E in this app?
-- [ ] What more modules can I add to the app for better security exploration?
+- MongoDB running
 
-### Work in progress
+Create `.env` file in root
 
-See what is happening and my newest changes at the `develop` branch
+Fill enviroment variables according `.env.example` file (don't forget MongoDB access)
+
+Run `npm install` or `yarn`
+
+Run `npm run build` or `yarn build`
+
+Run `npm run start` or `yarn start`
+
+**See the magic happening :)**
+
+If you want, you can change the content in `src` folder 
+run `npm run dev` or `yarn dev` to see your changes happening in real time
+
+### Techs used:
+
+- Typescript
+- Express
+- Mongoose 
+- MongoDB
+- Docker
+- NGINX
+- Jest for automated tests
+
+
