@@ -6,12 +6,20 @@ const SafeSchema = new mongoose.Schema(
     uuid: {
       type: String,
       unique: true,
-      set: () => randomUUID(),
+      default: () => randomUUID(),
     },
     owner: {
-      required: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     secrets: [
       {

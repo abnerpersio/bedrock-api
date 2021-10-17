@@ -1,7 +1,8 @@
 {
     "env": {
         "es2021": true,
-        "node": true
+        "node": true,
+        "jest/globals": true
     },
     "extends": [
         "airbnb-base"
@@ -12,13 +13,22 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "jest"
     ],
     "rules": {
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error",
       "import/extensions": "off",
       "import/prefer-default-export": "off",
       "class-methods-use-this": "off",
-      "no-underscore-dangle": "off"
+      "no-underscore-dangle": "off",
+      "import/no-extraneous-dependencies": "off",
+      "max-len": "off",
+      "no-unused-vars": ["error", { "argsIgnorePattern": "next" }]
     },
     "settings": {
       "import/resolver": {

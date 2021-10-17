@@ -1,16 +1,8 @@
-import express from 'express';
-import './config/bootstrap';
 import './config/database';
+import './config/bootstrap';
 
-import HeadersRemoverMiddleware from './middlewares/headers-remover';
-import RateLimiterMiddlware from './middlewares/rate-limiter';
+import app from './server';
 
-import routes from './routes';
+const { PORT } = process.env;
 
-const app = express();
-
-app.use(RateLimiterMiddlware);
-app.use(HeadersRemoverMiddleware);
-app.use(routes);
-
-app.listen(3000, () => console.log('Server is running at http://localhost:3000'));
+app.listen(PORT || 3000, () => console.log(`Server is running at http://localhost:${PORT}`));
