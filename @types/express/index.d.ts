@@ -1,4 +1,5 @@
 interface IAuth {
+  id?: string;
   uuid?: string;
   token?: string;
   email?: string;

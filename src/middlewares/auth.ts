@@ -25,6 +25,7 @@ export default function AuthMiddleware(req: Request, res: Response, next: NextFu
     }
 
     req.auth = {
+      id: verified.id,
       email: verified.email,
       uuid: verified.uuid,
       token,
