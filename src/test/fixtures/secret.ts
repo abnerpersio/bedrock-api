@@ -8,4 +8,5 @@ export const defaultSecret = {
   updatedName: 'Updated email password',
   updatedSecret: 'Updated secret',
   safeUuid: '51c6b0a7-19b8-428e-8868-127c29eea4fb',
+  key: 'default key',
 };

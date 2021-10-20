@@ -1,10 +1,10 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 
-import app from './server';
+import app from '../server';
 
-import { authToken, defaultUser } from './test/fixtures/user';
-import { mockUserModel } from './controllers/UserController.spec';
+import { authToken, defaultUser } from '../test/fixtures/user';
+import { mockUserModel } from '../controllers/UserController.spec';
 
 export const mockAuth = () => {
   jwt.sign = jest.fn().mockReturnValue(authToken);

@@ -2,9 +2,11 @@ import request from 'supertest';
 import { Safe, Secret } from '../models';
 
 import app from '../server';
+import { defaultSafe } from '../test/fixtures/safe';
 
 import { defaultSecret } from '../test/fixtures/secret';
 import { defaultUser } from '../test/fixtures/user';
+import cipher from '../utils/cipher';
 import { mockSafeModel } from './SafeController.spec';
 import { mockUserModel } from './UserController.spec';
 
@@ -39,6 +41,27 @@ describe('Safe Controller', () => {
   }
 
   test('It should create a secret successfully', async () => {
+    cipher.decrypt = jest.fn().mockReturnValue(defaultSecret.secret);
+    const { token } = (await mockAuthTokenRequest()).body.data;
+
+    const response = await request(app)
+      .post('/secrets')
+      .query({ key: defaultSecret.key })
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        safe: {
+          uuid: defaultSecret.safe,
+        },
+        name: defaultSecret.name,
+        secret: defaultSecret.secret,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.name).toBe(defaultSecret.name);
+  });
+
+  test('It should not create a secret without encryption key', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -53,8 +76,7 @@ describe('Safe Controller', () => {
         secret: defaultSecret.secret,
       });
 
-    expect(response.status).toBe(200);
-    expect(response.body.data.name).toBe(defaultSecret.name);
+    expect(response.status).toBe(400);
   });
 
   test('It should not create a secret 404 safe not found', async () => {
@@ -94,7 +116,7 @@ describe('Safe Controller', () => {
 
     const response = await request(app)
       .get('/secrets')
-      .query({ safe: defaultSecret.safe })
+      .query({ safe: defaultSafe.uuid })
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
@@ -199,5 +221,44 @@ describe('Safe Controller', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('secret not found');
+  });
+
+  test('It should decode a secret with valid encryption key', async () => {
+    cipher.decrypt = jest.fn().mockReturnValue(defaultSecret.secret);
+    const { token } = (await mockAuthTokenRequest()).body.data;
+
+    const response = await request(app)
+      .get(`/secrets/${defaultSecret.uuid}/decode`)
+      .query({ key: defaultSecret.key })
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toBe(defaultSecret.secret);
+  });
+
+  test('It should not decode a secret with invalid encryption key', async () => {
+    cipher.decrypt = jest.fn().mockReturnValue(false);
+    const { token } = (await mockAuthTokenRequest()).body.data;
+
+    const response = await request(app)
+      .get(`/secrets/${defaultSecret.uuid}/decode`)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(400);
+  });
+
+  test('It should get 401 decoding with invalid encryption key', async () => {
+    cipher.decrypt = jest.fn().mockReturnValue(false);
+    const { token } = (await mockAuthTokenRequest()).body.data;
+
+    const response = await request(app)
+      .get(`/secrets/${defaultSecret.uuid}/decode`)
+      .query({ key: 'wrongkey' })
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(401);
   });
 });
