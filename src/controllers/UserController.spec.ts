@@ -5,7 +5,7 @@ import { User } from '../models';
 import app from '../server';
 
 import { defaultUser } from '../test/fixtures/user';
-import { mockAuth } from '../auth.spec';
+import { mockAuth } from '../middlewares/auth.spec';
 
 export const mockUserModel = () => {
   User.findById = jest.fn().mockResolvedValue(new User(defaultUser));

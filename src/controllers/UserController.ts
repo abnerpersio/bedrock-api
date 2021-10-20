@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 
+import mongoose from 'mongoose';
+import { IUser } from '../interfaces/user';
 import { User } from '../models';
 import { verifiyHash } from '../utils/hash';
 import { generateToken } from '../utils/jwt';
-
-interface IUser {
-  _id?: mongoose.Types.ObjectId;
-  uuid?: string;
-  email?: string;
-  password?: string;
-}
 
 export class UserController {
   private User = User;

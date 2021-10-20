@@ -1,15 +1,8 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-
+import { ISafe } from '../interfaces/safe';
+import { ISecret } from '../interfaces/secret';
 import { Safe, Secret } from '../models';
-
-interface ISecret {
-  _id?: mongoose.Types.ObjectId;
-  safe?: mongoose.Types.ObjectId;
-  uuid?: string;
-  name?: string;
-  secret?: string;
-}
+import cipher from '../utils/cipher';
 
 export class SecretController {
   private Secret = Secret;
@@ -28,12 +21,18 @@ export class SecretController {
       return;
     }
 
+    const safeId = (
+      await Safe.findOne({
+        uuid: req.query.safe,
+      })
+    )?.toObject()._id;
+
     const secretsFound: ISecret[]|null = await this.Secret.find({
       $and: [
         {
           $or: [
             {
-              safe: req.query.safe,
+              safe: safeId,
             },
             {
               owner: req.query.owner,
@@ -102,8 +101,10 @@ export class SecretController {
 
   store = async (req: Request, res: Response) => {
     const { id } = req.auth;
+    const { secret } = req.body;
+    const { key } = req.query;
 
-    const isSafeValid = await this.Safe.findOne({
+    const isSafeValid: ISafe|null = await this.Safe.findOne({
       $and: [
         {
           uuid: req.body?.safe?.uuid,
@@ -123,9 +124,51 @@ export class SecretController {
       return;
     }
 
+    const secretsList: ISecret[]|null = await this.Secret.find({
+      _id: { $in: isSafeValid?.secrets },
+    });
+
+    if (
+      typeof secret !== 'string'
+      || typeof key !== 'string'
+    ) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid key in request query or secret in request body',
+      });
+
+      return;
+    }
+
+    const encryptListResults = secretsList?.map((item) => {
+      try {
+        const decoded = cipher.decrypt(
+          item.secret ? item.secret : null,
+          key,
+        );
+
+        if (!decoded) return false;
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    if (encryptListResults.some((item) => !item)) {
+      res.status(400).json({
+        success: true,
+        message: 'Different keys: another secret in this safe is saved with another key',
+      });
+
+      return;
+    }
+
     const secretCreated: ISecret = await this.Secret.create({
       name: req.body.name,
-      secret: req.body.secret,
+      secret: {
+        secret,
+        key,
+      },
       safe: isSafeValid._id,
       owner: id,
     });
@@ -234,5 +277,57 @@ export class SecretController {
     );
 
     res.sendStatus(204);
+  };
+
+  decode = async (req: Request, res: Response) => {
+    const { id } = req.auth;
+    const { key } = req.query;
+
+    if (!key || typeof key !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid key in request query',
+      });
+
+      return;
+    }
+
+    const secretExists: ISecret|null = await this.Secret.findOne({
+      $and: [
+        {
+          uuid: req.params.uuid,
+        },
+        {
+          owner: id,
+        },
+      ],
+    }, 'secret');
+
+    if (!secretExists) {
+      res.status(404).json({
+        success: false,
+        message: 'secret not found',
+      });
+
+      return;
+    }
+
+    try {
+      const decoded = cipher.decrypt(secretExists.secret ? secretExists.secret : null, key);
+
+      if (!decoded) {
+        throw new Error();
+      }
+
+      res.json({
+        success: true,
+        data: decoded,
+      });
+    } catch {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid key for this secret',
+      });
+    }
   };
 }

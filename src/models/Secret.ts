@@ -1,5 +1,11 @@
 import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
+import cipher from '../utils/cipher';
+
+interface ISecretObject {
+  secret?: string;
+  key?: string;
+}
 
 const SecretSchema = new mongoose.Schema(
   {
@@ -15,6 +21,17 @@ const SecretSchema = new mongoose.Schema(
     secret: {
       type: String,
       required: true,
+      select: false,
+      set: (value: ISecretObject) => {
+        const { secret, key } = value;
+
+        if (!secret || !key) {
+          throw new Error('invalid secret');
+        }
+
+        const encrypted = cipher.encrypt(secret, key);
+        return encrypted;
+      },
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

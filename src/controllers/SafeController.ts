@@ -1,20 +1,6 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-
+import { ISafe } from '../interfaces/safe';
 import { Safe } from '../models';
-
-interface IForeignSecret {
-  secret: mongoose.Types.ObjectId;
-}
-
-interface ISafe {
-  _id?: mongoose.Types.ObjectId;
-  owner?: mongoose.Types.ObjectId;
-  uuid?: string;
-  name?: string;
-  password?: string;
-  secrets?: IForeignSecret[];
-}
 
 export class SafeController {
   private Safe = Safe;

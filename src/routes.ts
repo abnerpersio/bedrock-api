@@ -34,5 +34,6 @@ routes.get('/secrets/search', secretController.index);
 routes.post('/secrets', secretController.store);
 routes.put('/secrets/:uuid', secretController.update);
 routes.delete('/secrets/:uuid', secretController.delete);
+routes.get('/secrets/:uuid/decode', secretController.decode);
 
 export default routes;
