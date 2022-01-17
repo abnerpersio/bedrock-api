@@ -7,8 +7,8 @@ import { defaultSafe } from '../test/fixtures/safe';
 import { defaultSecret } from '../test/fixtures/secret';
 import { defaultUser } from '../test/fixtures/user';
 import cipher from '../utils/cipher';
-import { mockSafeModel } from './SafeController.spec';
-import { mockUserModel } from './UserController.spec';
+import { mockSafeModel } from './safe.controller.spec';
+import { mockUserModel } from './user.controller.spec';
 
 export const mockSecretModel = () => {
   Secret.find = jest.fn().mockResolvedValue([new Secret(defaultSecret)]);
@@ -16,11 +16,13 @@ export const mockSecretModel = () => {
   Secret.findOne = jest.fn().mockResolvedValue(new Secret(defaultSecret));
   Secret.create = jest.fn().mockResolvedValue(new Secret(defaultSecret));
   Secret.findOneAndDelete = jest.fn().mockResolvedValue(true);
-  Secret.findOneAndUpdate = jest.fn().mockResolvedValue(new Secret({
-    ...defaultSecret,
-    name: defaultSecret.updatedName,
-    secret: defaultSecret.updatedSecret,
-  }));
+  Secret.findOneAndUpdate = jest.fn().mockResolvedValue(
+    new Secret({
+      ...defaultSecret,
+      name: defaultSecret.updatedName,
+      secret: defaultSecret.updatedSecret,
+    }),
+  );
 };
 
 describe('Safe Controller', () => {
@@ -31,13 +33,10 @@ describe('Safe Controller', () => {
   });
 
   async function mockAuthTokenRequest() {
-    return request(app)
-      .post('/login')
-      .set('Content-Type', 'application/json')
-      .send({
-        email: defaultUser.email,
-        password: defaultUser.password,
-      });
+    return request(app).post('/login').set('Content-Type', 'application/json').send({
+      email: defaultUser.email,
+      password: defaultUser.password,
+    });
   }
 
   test('It should create a secret successfully', async () => {
@@ -126,9 +125,7 @@ describe('Safe Controller', () => {
   test('It should not get all secrets without query', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
-      .get('/secrets')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get('/secrets').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(400);
   });

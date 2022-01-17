@@ -12,3 +12,13 @@ export interface ISafe {
   password?: string;
   secrets?: IForeignSecret[];
 }
+
+export interface ISafeSearch {
+  name?: string;
+  id?: string;
+  uuid?: string;
+}
+
+export interface ISafeCreate {
+  name: string;
+}

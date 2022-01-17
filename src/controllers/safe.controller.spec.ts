@@ -5,7 +5,7 @@ import app from '../server';
 
 import { defaultSafe } from '../test/fixtures/safe';
 import { defaultUser } from '../test/fixtures/user';
-import { mockUserModel } from './UserController.spec';
+import { mockUserModel } from './user.controller.spec';
 
 export const mockSafeModel = () => {
   Safe.find = jest.fn().mockResolvedValue([new Safe(defaultSafe)]);
@@ -13,7 +13,9 @@ export const mockSafeModel = () => {
   Safe.findOne = jest.fn().mockResolvedValue(new Safe(defaultSafe));
   Safe.create = jest.fn().mockResolvedValue(new Safe(defaultSafe));
   Safe.findOneAndDelete = jest.fn().mockResolvedValue(true);
-  Safe.findOneAndUpdate = jest.fn().mockResolvedValue(new Safe({ ...defaultSafe, name: defaultSafe.updatedName }));
+  Safe.findOneAndUpdate = jest
+    .fn()
+    .mockResolvedValue(new Safe({ ...defaultSafe, name: defaultSafe.updatedName }));
 };
 
 describe('Safe Controller', () => {
@@ -23,13 +25,10 @@ describe('Safe Controller', () => {
   });
 
   async function mockAuthTokenRequest() {
-    return request(app)
-      .post('/login')
-      .set('Content-Type', 'application/json')
-      .send({
-        email: defaultUser.email,
-        password: defaultUser.password,
-      });
+    return request(app).post('/login').set('Content-Type', 'application/json').send({
+      email: defaultUser.email,
+      password: defaultUser.password,
+    });
   }
 
   test('It should create a safe successfully', async () => {
@@ -50,9 +49,7 @@ describe('Safe Controller', () => {
   test('It should get all safes successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
-      .get('/safes')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get('/safes').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.data[0].name).toBe(defaultSafe.name);
@@ -62,9 +59,7 @@ describe('Safe Controller', () => {
     Safe.find = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
-      .get('/safes')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get('/safes').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
   });
