@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ISafe } from '../interfaces/safe';
+import * as safeInterfaces from '../interfaces/safe';
 import { Safe } from '../models';
 
 export class SafeController {
@@ -8,7 +8,7 @@ export class SafeController {
   list = async (req: Request, res: Response) => {
     const { id } = req.auth;
 
-    const safesFound: ISafe[]|null = await this.Safe.find({
+    const safesFound: safeInterfaces.ISafe[] | null = await this.Safe.find({
       owner: id,
     });
 
@@ -27,21 +27,21 @@ export class SafeController {
     });
   };
 
-  index = async (req: Request, res: Response) => {
+  search = async (req: Request<unknown, unknown, safeInterfaces.ISafeSearch>, res: Response) => {
     const { id } = req.auth;
 
-    const safeFound: ISafe|null = await this.Safe.findOne({
+    const safeFound: safeInterfaces.ISafe | null = await this.Safe.findOne({
       $and: [
         {
           $or: [
             {
-              name: req.query.name,
+              name: req.body.name,
             },
             {
-              _id: req.query.id,
+              _id: req.body.id,
             },
             {
-              uuid: req.query.uuid,
+              uuid: req.body.uuid,
             },
           ],
         },
@@ -66,10 +66,10 @@ export class SafeController {
     });
   };
 
-  store = async (req: Request, res: Response) => {
+  store = async (req: Request<unknown, unknown, safeInterfaces.ISafeCreate>, res: Response) => {
     const { id } = req.auth;
 
-    const safeCreated: ISafe = await this.Safe.create({
+    const safeCreated: safeInterfaces.ISafe = await this.Safe.create({
       name: req.body.name,
       owner: id,
     });
@@ -80,10 +80,10 @@ export class SafeController {
     });
   };
 
-  update = async (req: Request, res: Response) => {
+  update = async (req: Request<{ uuid: string }, unknown, { name?: string }>, res: Response) => {
     const { id } = req.auth;
 
-    const safeExists: ISafe|null = await this.Safe.findOne({
+    const safeExists: safeInterfaces.ISafe | null = await this.Safe.findOne({
       $and: [
         {
           uuid: req.params.uuid,
@@ -103,7 +103,7 @@ export class SafeController {
       return;
     }
 
-    const safeUpdated: ISafe|null = await this.Safe.findOneAndUpdate(
+    const safeUpdated: safeInterfaces.ISafe | null = await this.Safe.findOneAndUpdate(
       {
         $and: [
           {
@@ -128,10 +128,10 @@ export class SafeController {
     });
   };
 
-  delete = async (req: Request, res: Response) => {
+  delete = async (req: Request<{ uuid: string }>, res: Response) => {
     const { id } = req.auth;
 
-    const safeExists: ISafe|null = await this.Safe.findOne({
+    const safeExists: safeInterfaces.ISafe | null = await this.Safe.findOne({
       $and: [
         {
           uuid: req.params.uuid,

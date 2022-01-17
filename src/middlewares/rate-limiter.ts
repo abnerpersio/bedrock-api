@@ -32,6 +32,7 @@ export default function RateLimiterMiddlware(req: Request, res: Response, next: 
         }
 
         res.status(options.statusCode).json({ message: options.message });
+        return false;
       }
 
       next();

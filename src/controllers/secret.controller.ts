@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ISafe } from '../interfaces/safe';
-import { ISecret } from '../interfaces/secret';
+import * as secretInterfaces from '../interfaces/secret';
 import { Safe, Secret } from '../models';
 import cipher from '../utils/cipher';
 
@@ -27,7 +27,7 @@ export class SecretController {
       })
     )?.toObject()._id;
 
-    const secretsFound: ISecret[]|null = await this.Secret.find({
+    const secretsFound: secretInterfaces.ISecret[] | null = await this.Secret.find({
       $and: [
         {
           $or: [
@@ -60,21 +60,24 @@ export class SecretController {
     });
   };
 
-  index = async (req: Request, res: Response) => {
+  search = async (
+    req: Request<unknown, unknown, secretInterfaces.ISecretSearch>,
+    res: Response,
+  ) => {
     const { id } = req.auth;
 
-    const safeFound: ISecret|null = await this.Secret.findOne({
+    const safeFound: secretInterfaces.ISecret | null = await this.Secret.findOne({
       $and: [
         {
           $or: [
             {
-              name: req.query.name,
+              name: req.body.name,
             },
             {
-              _id: req.query.id,
+              _id: req.body.id,
             },
             {
-              uuid: req.query.uuid,
+              uuid: req.body.uuid,
             },
           ],
         },
@@ -99,15 +102,14 @@ export class SecretController {
     });
   };
 
-  store = async (req: Request, res: Response) => {
+  store = async (req: Request<unknown, unknown, secretInterfaces.ISecretCreate>, res: Response) => {
     const { id } = req.auth;
-    const { secret } = req.body;
-    const { key } = req.query;
+    const { params, key, safe } = req.body;
 
-    const isSafeValid: ISafe|null = await this.Safe.findOne({
+    const isSafeValid: ISafe | null = await this.Safe.findOne({
       $and: [
         {
-          uuid: req.body?.safe?.uuid,
+          uuid: safe.uuid,
         },
         {
           owner: id,
@@ -124,14 +126,11 @@ export class SecretController {
       return;
     }
 
-    const secretsList: ISecret[]|null = await this.Secret.find({
+    const secretsList: secretInterfaces.ISecret[] | null = await this.Secret.find({
       _id: { $in: isSafeValid?.secrets },
     });
 
-    if (
-      typeof secret !== 'string'
-      || typeof key !== 'string'
-    ) {
+    if (typeof params.secret !== 'string' || typeof key !== 'string') {
       res.status(400).json({
         success: false,
         message: 'Invalid key in request query or secret in request body',
@@ -142,10 +141,7 @@ export class SecretController {
 
     const encryptListResults = secretsList?.map((item) => {
       try {
-        const decoded = cipher.decrypt(
-          item.secret ? item.secret : null,
-          key,
-        );
+        const decoded = cipher.decrypt(item.secret ? item.secret : null, key);
 
         if (!decoded) return false;
         return true;
@@ -163,10 +159,10 @@ export class SecretController {
       return;
     }
 
-    const secretCreated: ISecret = await this.Secret.create({
-      name: req.body.name,
+    const secretCreated: secretInterfaces.ISecret = await this.Secret.create({
+      name: params.name,
       secret: {
-        secret,
+        secret: params.secret,
         key,
       },
       safe: isSafeValid._id,
@@ -186,10 +182,13 @@ export class SecretController {
     });
   };
 
-  update = async (req: Request, res: Response) => {
+  update = async (
+    req: Request<{ uuid: string }, unknown, secretInterfaces.ISecretUpdate>,
+    res: Response,
+  ) => {
     const { id } = req.auth;
 
-    const secretExists: ISecret|null = await this.Secret.findOne({
+    const secretExists: secretInterfaces.ISecret | null = await this.Secret.findOne({
       $and: [
         {
           uuid: req.params.uuid,
@@ -209,7 +208,7 @@ export class SecretController {
       return;
     }
 
-    const secretUpdated: ISecret|null = await this.Secret.findOneAndUpdate(
+    const secretUpdated: secretInterfaces.ISecret | null = await this.Secret.findOneAndUpdate(
       {
         $and: [
           {
@@ -235,10 +234,10 @@ export class SecretController {
     });
   };
 
-  delete = async (req: Request, res: Response) => {
+  delete = async (req: Request<{ uuid: string }>, res: Response) => {
     const { id } = req.auth;
 
-    const secretExists: ISecret|null = await this.Secret.findOne({
+    const secretExists: secretInterfaces.ISecret | null = await this.Secret.findOne({
       $and: [
         {
           uuid: req.params.uuid,
@@ -279,9 +278,12 @@ export class SecretController {
     res.sendStatus(204);
   };
 
-  decode = async (req: Request, res: Response) => {
+  decode = async (
+    req: Request<{ uuid: string }, unknown, secretInterfaces.IDecodeSearch>,
+    res: Response,
+  ) => {
     const { id } = req.auth;
-    const { key } = req.query;
+    const { key } = req.body;
 
     if (!key || typeof key !== 'string') {
       res.status(400).json({
@@ -292,16 +294,19 @@ export class SecretController {
       return;
     }
 
-    const secretExists: ISecret|null = await this.Secret.findOne({
-      $and: [
-        {
-          uuid: req.params.uuid,
-        },
-        {
-          owner: id,
-        },
-      ],
-    }, 'secret');
+    const secretExists: secretInterfaces.ISecret | null = await this.Secret.findOne(
+      {
+        $and: [
+          {
+            uuid: req.params.uuid,
+          },
+          {
+            owner: id,
+          },
+        ],
+      },
+      'secret',
+    );
 
     if (!secretExists) {
       res.status(404).json({

@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-import './User';
-import './Safe';
-import './Secret';
+import './user';
+import './safe';
+import './secret';
 
 export const User = mongoose.model('User');
 export const Safe = mongoose.model('Safe');
