@@ -1,5 +1,9 @@
 # bedrock-api
 
+This is a project created in KAC and for learning about security in my Node.JS apps.
+
+I learned a lot of things about Metasploit, nmap function, Rate Limiter, NGINX, Docker, Jest testings with MongoDB and made my think about a lot of thinks. 
+
 ### How to run the project
 
 #### With docker:
