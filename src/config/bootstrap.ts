@@ -13,9 +13,10 @@ declare let process: {
 };
 
 config({
-  path: process.env.NODE_ENV === 'test'
-    ? resolve(__dirname, '..', '..', '.env.test')
-    : resolve(__dirname, '..', '..', '.env'),
+  path:
+    process.env.NODE_ENV === 'test'
+      ? resolve(__dirname, '..', '..', '.env.test')
+      : resolve(__dirname, '..', '..', '.env'),
 });
 
 export const { DB_URI } = process.env;

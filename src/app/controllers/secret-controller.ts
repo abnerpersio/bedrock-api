@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { ISafe } from '../interfaces/safe';
-import * as secretInterfaces from '../interfaces/secret';
+import { ISafe } from '@shared/interfaces/safe';
+import * as secretInterfaces from '@shared/interfaces/secret';
 import { Safe, Secret } from '../models';
-import cipher from '../utils/cipher';
+import cipher from '@shared/utils/cipher';
 
 export class SecretController {
   private Secret = Secret;
@@ -130,7 +130,8 @@ export class SecretController {
       _id: { $in: isSafeValid?.secrets },
     });
 
-    if (typeof params.secret !== 'string' || typeof key !== 'string') {
+    // console.log(params);
+    if (typeof params?.secret !== 'string' || typeof key !== 'string') {
       res.status(400).json({
         success: false,
         message: 'Invalid key in request query or secret in request body',
@@ -288,7 +289,7 @@ export class SecretController {
     if (!key || typeof key !== 'string') {
       res.status(400).json({
         success: false,
-        message: 'Invalid key in request query',
+        message: 'Invalid key in request body',
       });
 
       return;

@@ -1,22 +1,12 @@
 import request from 'supertest';
-import { Safe } from '../models';
+import { Safe } from '../../models';
 
-import app from '../server';
+import app from '../../../server';
 
-import { defaultSafe } from '../test/fixtures/safe';
-import { defaultUser } from '../test/fixtures/user';
-import { mockUserModel } from './user.controller.spec';
-
-export const mockSafeModel = () => {
-  Safe.find = jest.fn().mockResolvedValue([new Safe(defaultSafe)]);
-  Safe.findById = jest.fn().mockResolvedValue(new Safe(defaultSafe));
-  Safe.findOne = jest.fn().mockResolvedValue(new Safe(defaultSafe));
-  Safe.create = jest.fn().mockResolvedValue(new Safe(defaultSafe));
-  Safe.findOneAndDelete = jest.fn().mockResolvedValue(true);
-  Safe.findOneAndUpdate = jest
-    .fn()
-    .mockResolvedValue(new Safe({ ...defaultSafe, name: defaultSafe.updatedName }));
-};
+import { defaultSafe } from '@test-utils/fixtures/safe';
+import { defaultUser } from '@test-utils/fixtures/user';
+import { mockUserModel } from '@test-utils/models/user';
+import { mockSafeModel } from '@test-utils/models/safe';
 
 describe('Safe Controller', () => {
   beforeEach(() => {
@@ -68,9 +58,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/safes/search')
-      .query({ name: defaultSafe.name })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/safes/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: defaultSafe.name });
 
     expect(response.status).toBe(200);
     expect(response.body.data.name).toBe(defaultSafe.name);
@@ -80,9 +70,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/safes/search')
-      .query({ id: defaultSafe._id })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/safes/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ id: defaultSafe._id });
 
     expect(response.status).toBe(200);
     expect(response.body.data.name).toBe(defaultSafe.name);
@@ -92,9 +82,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/safes/search')
-      .query({ uuid: defaultSafe.uuid })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/safes/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ uuid: defaultSafe.uuid });
 
     expect(response.status).toBe(200);
     expect(response.body.data.name).toBe(defaultSafe.name);
@@ -105,9 +95,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/safes/search')
-      .query({ name: 'invalidname' })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/safes/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'invalidname' });
 
     expect(response.status).toBe(404);
   });

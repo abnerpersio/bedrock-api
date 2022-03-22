@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as safeInterfaces from '../interfaces/safe';
+import * as safeInterfaces from '@shared/interfaces/safe';
 import { Safe } from '../models';
 
 export class SafeController {
@@ -28,26 +28,15 @@ export class SafeController {
   };
 
   search = async (req: Request<unknown, unknown, safeInterfaces.ISafeSearch>, res: Response) => {
-    const { id } = req.auth;
+    const { id: userId } = req.auth;
+    const { name, id: safeId, uuid } = req.body;
 
     const safeFound: safeInterfaces.ISafe | null = await this.Safe.findOne({
       $and: [
         {
-          $or: [
-            {
-              name: req.body.name,
-            },
-            {
-              _id: req.body.id,
-            },
-            {
-              uuid: req.body.uuid,
-            },
-          ],
+          $or: [{ name }, { _id: safeId }, { uuid }],
         },
-        {
-          owner: id,
-        },
+        { owner: userId },
       ],
     });
 
@@ -67,11 +56,11 @@ export class SafeController {
   };
 
   store = async (req: Request<unknown, unknown, safeInterfaces.ISafeCreate>, res: Response) => {
-    const { id } = req.auth;
+    const { id: userId } = req.auth;
 
     const safeCreated: safeInterfaces.ISafe = await this.Safe.create({
       name: req.body.name,
-      owner: id,
+      owner: userId,
     });
 
     res.json({
@@ -81,17 +70,12 @@ export class SafeController {
   };
 
   update = async (req: Request<{ uuid: string }, unknown, { name?: string }>, res: Response) => {
-    const { id } = req.auth;
+    const { id: userId } = req.auth;
+    const { uuid } = req.params;
+    const { name } = req.body;
 
     const safeExists: safeInterfaces.ISafe | null = await this.Safe.findOne({
-      $and: [
-        {
-          uuid: req.params.uuid,
-        },
-        {
-          owner: id,
-        },
-      ],
+      $and: [{ uuid }, { owner: userId }],
     });
 
     if (!safeExists) {
@@ -104,22 +88,9 @@ export class SafeController {
     }
 
     const safeUpdated: safeInterfaces.ISafe | null = await this.Safe.findOneAndUpdate(
-      {
-        $and: [
-          {
-            uuid: req.params.uuid,
-          },
-          {
-            owner: id,
-          },
-        ],
-      },
-      {
-        name: req.body?.name,
-      },
-      {
-        new: true,
-      },
+      { $and: [{ uuid }, { owner: userId }] },
+      { name },
+      { new: true },
     );
 
     res.json({
@@ -129,17 +100,11 @@ export class SafeController {
   };
 
   delete = async (req: Request<{ uuid: string }>, res: Response) => {
-    const { id } = req.auth;
+    const { id: userId } = req.auth;
+    const { uuid } = req.params;
 
     const safeExists: safeInterfaces.ISafe | null = await this.Safe.findOne({
-      $and: [
-        {
-          uuid: req.params.uuid,
-        },
-        {
-          owner: id,
-        },
-      ],
+      $and: [{ uuid }, { owner: userId }],
     });
 
     if (!safeExists) {
@@ -152,14 +117,7 @@ export class SafeController {
     }
 
     await this.Safe.findOneAndDelete({
-      $and: [
-        {
-          uuid: req.params.uuid,
-        },
-        {
-          owner: id,
-        },
-      ],
+      $and: [{ uuid }, { owner: userId }],
     });
 
     res.sendStatus(204);

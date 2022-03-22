@@ -1,4 +1,4 @@
-import cipher from './cipher';
+import cipher from '../cipher';
 
 describe('Criptograph test', () => {
   test('It should cryptograph a secret', () => {

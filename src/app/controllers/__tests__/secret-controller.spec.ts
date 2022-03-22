@@ -1,29 +1,15 @@
 import request from 'supertest';
-import { Safe, Secret } from '../models';
+import { Safe, Secret } from '../../models';
 
-import app from '../server';
-import { defaultSafe } from '../test/fixtures/safe';
+import app from '../../../server';
+import { defaultSafe } from '@test-utils/fixtures/safe';
 
-import { defaultSecret } from '../test/fixtures/secret';
-import { defaultUser } from '../test/fixtures/user';
-import cipher from '../utils/cipher';
-import { mockSafeModel } from './safe.controller.spec';
-import { mockUserModel } from './user.controller.spec';
-
-export const mockSecretModel = () => {
-  Secret.find = jest.fn().mockResolvedValue([new Secret(defaultSecret)]);
-  Secret.findById = jest.fn().mockResolvedValue(new Secret(defaultSecret));
-  Secret.findOne = jest.fn().mockResolvedValue(new Secret(defaultSecret));
-  Secret.create = jest.fn().mockResolvedValue(new Secret(defaultSecret));
-  Secret.findOneAndDelete = jest.fn().mockResolvedValue(true);
-  Secret.findOneAndUpdate = jest.fn().mockResolvedValue(
-    new Secret({
-      ...defaultSecret,
-      name: defaultSecret.updatedName,
-      secret: defaultSecret.updatedSecret,
-    }),
-  );
-};
+import { defaultSecret } from '@test-utils/fixtures/secret';
+import { defaultUser } from '@test-utils/fixtures/user';
+import cipher from '@shared/utils/cipher';
+import { mockUserModel } from '@test-utils/models/user';
+import { mockSafeModel } from '@test-utils/models/safe';
+import { mockSecretModel } from '@test-utils/models/secret';
 
 describe('Safe Controller', () => {
   beforeEach(() => {
@@ -45,15 +31,17 @@ describe('Safe Controller', () => {
 
     const response = await request(app)
       .post('/secrets')
-      .query({ key: defaultSecret.key })
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
       .send({
         safe: {
           uuid: defaultSecret.safe,
         },
-        name: defaultSecret.name,
-        secret: defaultSecret.secret,
+        params: {
+          name: defaultSecret.name,
+          secret: defaultSecret.secret,
+        },
+        key: defaultSecret.key,
       });
 
     expect(response.status).toBe(200);
@@ -146,9 +134,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/secrets/search')
-      .query({ name: defaultSecret.name })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/secrets/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: defaultSecret.name });
 
     expect(response.status).toBe(200);
     expect(response.body.data.name).toBe(defaultSecret.name);
@@ -159,9 +147,9 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get('/secrets/search')
-      .query({ name: 'invalidname' })
-      .set('Authorization', `Bearer ${token}`);
+      .post('/secrets/search')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'invalidname' });
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('secret not found');
@@ -225,10 +213,10 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get(`/secrets/${defaultSecret.uuid}/decode`)
-      .query({ key: defaultSecret.key })
+      .post(`/secrets/${defaultSecret.uuid}/decode`)
       .set('Content-Type', 'application/json')
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${token}`)
+      .send({ key: defaultSecret.key });
 
     expect(response.status).toBe(200);
     expect(response.body.data).toBe(defaultSecret.secret);
@@ -239,7 +227,7 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get(`/secrets/${defaultSecret.uuid}/decode`)
+      .post(`/secrets/${defaultSecret.uuid}/decode`)
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`);
 
@@ -251,10 +239,10 @@ describe('Safe Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
-      .get(`/secrets/${defaultSecret.uuid}/decode`)
-      .query({ key: 'wrongkey' })
+      .post(`/secrets/${defaultSecret.uuid}/decode`)
       .set('Content-Type', 'application/json')
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${token}`)
+      .send({ key: 'wrongkey' });
 
     expect(response.status).toBe(401);
   });
