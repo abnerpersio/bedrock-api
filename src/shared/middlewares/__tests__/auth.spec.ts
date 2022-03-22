@@ -1,10 +1,10 @@
-import request from 'supertest';
 import jwt from 'jsonwebtoken';
-
-import app from '../../../server';
+import request from 'supertest';
 
 import { defaultUser } from '@test-utils/fixtures/user';
 import { mockUserModel } from '@test-utils/models/user';
+
+import app from '../../../server';
 
 describe('Login test', () => {
   beforeEach(() => {

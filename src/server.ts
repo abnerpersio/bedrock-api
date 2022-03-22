@@ -1,12 +1,12 @@
-import 'express-async-errors';
 import express from 'express';
-import '@config/bootstrap';
-import './app/models';
+import 'express-async-errors';
 
+import '@config/bootstrap';
 import HeadersRemoverMiddleware from '@shared/middlewares/headers-remover';
 import RateLimiterMiddlware from '@shared/middlewares/rate-limiter';
 import ErrorHandler from '@shared/utils/error-handler';
 
+import './app/models';
 import routes from './routes';
 
 const app = express();

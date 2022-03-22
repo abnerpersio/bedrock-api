@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
+
 import { hash } from '@shared/utils/hash';
 
 const UserSchema = new mongoose.Schema(

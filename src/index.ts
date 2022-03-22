@@ -1,7 +1,7 @@
 import pino from 'pino';
 
-import '@config/database';
 import '@config/bootstrap';
+import '@config/database';
 
 import app from './server';
 

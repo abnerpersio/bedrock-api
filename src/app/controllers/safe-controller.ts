@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+
+import { SafeNotFound } from '@shared/errors/safe-not-found';
 import * as safeInterfaces from '@shared/interfaces/safe';
+
 import { Safe } from '../models';
-import { RequestError } from '../../shared/errors/request-error';
-import { SafeNotFound } from '../../shared/errors/safe-not-found';
 
 export class SafeController {
   private Safe = Safe;

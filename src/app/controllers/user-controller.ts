@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
-
 import mongoose from 'mongoose';
+
+import { RequestError } from '@shared/errors/request-error';
 import { IUser } from '@shared/interfaces/user';
-import { User } from '../models';
+import { verifiyHash } from '@shared/utils/hash';
 import { generateToken } from '@shared/utils/jwt';
-import { RequestError } from '../../shared/errors/request-error';
+
+import { User } from '../models';
 
 export class UserController {
   private User = User;
@@ -27,7 +29,11 @@ export class UserController {
 
     if (!userFound) throw new RequestError('user with this email was not found', 404);
 
-    const token = await generateToken({
+    const isPasswordVerified = verifiyHash(userFound.password, password);
+
+    if (!isPasswordVerified) throw new RequestError('wrong passsword', 401);
+
+    const token = generateToken({
       id: userFound._id,
       uuid: userFound.uuid,
       email: userFound.email,

@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
+
 import { LIMIT_REQUESTS_BY_SECOND } from '@config/bootstrap';
-import MemoryIPStore from '../utils/memory-ip-store';
+
 import { RequestError } from '../errors/request-error';
+import MemoryIPStore from '../utils/memory-ip-store';
 
 const options = {
   windowMs: 60 * 1000,

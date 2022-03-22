@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
+
+import { RequestError } from '@shared/errors/request-error';
+import { SafeNotFound } from '@shared/errors/safe-not-found';
 import { ISafe } from '@shared/interfaces/safe';
 import * as secretInterfaces from '@shared/interfaces/secret';
-import { Safe, Secret } from '../models';
 import cipher from '@shared/utils/cipher';
-import { RequestError } from '../../shared/errors/request-error';
-import { SafeNotFound } from '../../shared/errors/safe-not-found';
+
+import { Safe, Secret } from '../models';
 
 export class SecretController {
   private Secret = Secret;

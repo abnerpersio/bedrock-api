@@ -1,4 +1,4 @@
-import { createCipheriv, scryptSync, createDecipheriv, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
 
 const algorithm = 'aes-192-cbc';
 

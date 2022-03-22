@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+
 import { RequestError } from '../errors/request-error';
 import { verifyToken } from '../utils/jwt';
 
@@ -13,7 +14,7 @@ export default function AuthMiddleware(req: Request, res: Response, next: NextFu
   try {
     const verified = verifyToken(token);
 
-    if (!verified) throw Error();
+    if (!verified) throw new Error();
 
     req.auth = {
       id: verified.id,

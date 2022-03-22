@@ -9,7 +9,7 @@ export const generateToken = (data: any): string =>
 
 export const verifyToken = (token: string | undefined): any => {
   if (!token) {
-    throw Error('token not sent');
+    throw new Error('token not sent');
   }
 
   return jwt.verify(token, JWT_SECRET);
