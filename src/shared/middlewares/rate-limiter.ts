@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { LIMIT_REQUESTS_BY_SECOND } from '@config/bootstrap';
 import MemoryIPStore from '../utils/memory-ip-store';
+import { RequestError } from '../errors/request-error';
 
 const options = {
   windowMs: 60 * 1000,
   max: parseInt(LIMIT_REQUESTS_BY_SECOND, 10) || 5,
   message: 'Too many requests, please try again later.',
-  statusCode: 429,
 };
 
 const store = new MemoryIPStore(options.windowMs);
@@ -31,8 +31,7 @@ export default function RateLimiterMiddlware(req: Request, res: Response, next: 
           res.setHeader('Retry-After', Math.ceil(options.windowMs / 1000));
         }
 
-        res.status(options.statusCode).json({ message: options.message });
-        return false;
+        throw new RequestError(options.message, 429);
       }
 
       next();

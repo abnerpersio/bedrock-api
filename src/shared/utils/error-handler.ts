@@ -1,7 +1,10 @@
 import { ErrorRequestHandler } from 'express';
+import { RequestError } from '../errors/request-error';
 
-const ErrorHandler: ErrorRequestHandler = (error: Error, req, res, next) => {
-  res.status(500).json({
+const ErrorHandler: ErrorRequestHandler = (error: Error, _req, res, _next) => {
+  const { statusCode = 500 } = error as RequestError;
+
+  res.status(statusCode).json({
     success: false,
     message: error.message,
   });
