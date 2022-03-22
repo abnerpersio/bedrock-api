@@ -25,7 +25,6 @@ jobs:
       # - uses: borales/actions-yarn@v2.3.0
       #   with:
       #     cmd: test
-      - name: Collect coverage
       - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: test:cov > OUT; sed -n 6,8p OUT > .github/workflows/COVERAGE_REPORT
