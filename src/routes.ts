@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express';
-import { SafeController } from './controllers/safe.controller';
-import { SecretController } from './controllers/secret.controller';
+import { SafeController } from '@controllers/safe-controller';
+import { SecretController } from '@controllers/secret-controller';
 
-import { UserController } from './controllers/user.controller';
-import AuthMiddleware from './middlewares/auth';
+import { UserController } from '@controllers/user-controller';
+import AuthMiddleware from '@shared/middlewares/auth';
 
 const userController = new UserController();
 const safeController = new SafeController();
@@ -34,6 +34,6 @@ routes.post('/secrets/search', secretController.search);
 routes.post('/secrets', secretController.store);
 routes.put('/secrets/:uuid', secretController.update);
 routes.delete('/secrets/:uuid', secretController.delete);
-routes.get('/secrets/:uuid/decode', secretController.decode);
+routes.post('/secrets/:uuid/decode', secretController.decode);
 
 export default routes;
