@@ -1,47 +1,40 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 import { RequestError } from '@shared/errors/request-error';
 import { SafeNotFound } from '@shared/errors/safe-not-found';
 import { ISafe } from '@shared/interfaces/safe';
 import * as secretInterfaces from '@shared/interfaces/secret';
-import cipher from '@shared/utils/cipher';
+import { decrypt } from '@shared/utils/crypto';
 
 import { Safe, Secret } from '../models';
+import { SafeRepository } from '../repositories/safe-repository';
 
 export class SecretController {
   private Secret = Secret;
 
   private Safe = Safe;
 
+  private safeRepository = new SafeRepository();
+
   list = async (req: Request, res: Response) => {
-    const { id } = req.auth;
+    const { id: owner } = req.auth;
+    const { safe } = req.query;
 
-    if (!req.query.safe && !req.query.owner) {
-      throw new RequestError('safe or owner is missing in query params', 400);
-    }
+    const safeExists = await this.safeRepository.findByUuid({
+      uuid: safe as string,
+      owner,
+    });
 
-    const safeId = (
-      await Safe.findOne({
-        uuid: req.query.safe,
-      })
-    )?.toObject()._id;
+    const safeId = new mongoose.mongo.ObjectId(safeExists?._id);
 
     const secretsFound: secretInterfaces.ISecret[] | null = await this.Secret.find({
-      $and: [
+      $or: [
         {
-          $or: [
-            {
-              safe: safeId,
-            },
-            {
-              owner: req.query.owner,
-            },
-          ],
-        },
-        {
-          owner: id,
+          safe: safeId,
         },
       ],
+      owner,
     });
 
     if (!secretsFound) throw new RequestError('secrets not found from this safe', 404);
@@ -115,7 +108,7 @@ export class SecretController {
 
     const encryptListResults = secretsList?.map((item) => {
       try {
-        const decoded = cipher.decrypt(item.secret ? item.secret : null, key);
+        const decoded = decrypt(item.secret ? item.secret : null, key);
 
         if (!decoded) return false;
         return true;
@@ -266,7 +259,7 @@ export class SecretController {
     if (!secretExists) throw new RequestError('secret not found', 404);
 
     try {
-      const decoded = cipher.decrypt(secretExists.secret ?? null, key);
+      const decoded = decrypt(secretExists.secret ?? null, key);
       if (!decoded) throw new Error();
 
       res.json({

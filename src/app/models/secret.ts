@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
 
-import cipher from '@shared/utils/cipher';
+import { encrypt } from '@shared/utils/crypto';
 
 interface ISecretObject {
   secret?: string;
@@ -30,7 +30,7 @@ const SecretSchema = new mongoose.Schema(
           throw new Error('invalid secret');
         }
 
-        const encrypted = cipher.encrypt(secret, key);
+        const encrypted = encrypt(secret, key);
         return encrypted;
       },
     },
