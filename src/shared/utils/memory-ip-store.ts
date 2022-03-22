@@ -42,11 +42,8 @@ class MemoryIPStore {
       });
     }
 
-    cb(
-      this.storage[indexExists]?.count || 1,
-      this.resetTime,
-    );
-  }
+    cb(this.storage[indexExists]?.count || 1, this.resetTime);
+  };
 
   decrement = (key: string) => {
     const indexExists = this.storage.findIndex((item) => item.ip === key);
@@ -54,12 +51,12 @@ class MemoryIPStore {
     if (indexExists >= 0) {
       this.storage[indexExists].count -= 1;
     }
-  }
+  };
 
   resetAll = () => {
     this.storage = [];
     this.resetTime = calculateNextResetTime(this.windowMs);
-  }
+  };
 
   resetKey = (key: string) => {
     const indexExists = this.storage.findIndex((item) => item.ip === key);
@@ -67,7 +64,7 @@ class MemoryIPStore {
     if (indexExists >= 0) {
       this.storage.splice(indexExists, 1);
     }
-  }
+  };
 }
 
 export default MemoryIPStore;

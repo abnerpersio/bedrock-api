@@ -1,11 +1,11 @@
 import 'express-async-errors';
 import express from 'express';
-import './config/bootstrap';
-import './models';
+import '@config/bootstrap';
+import './app/models';
 
-import HeadersRemoverMiddleware from './middlewares/headers-remover';
-import RateLimiterMiddlware from './middlewares/rate-limiter';
-import ErrorHandler from './utils/error-handler';
+import HeadersRemoverMiddleware from '@shared/middlewares/headers-remover';
+import RateLimiterMiddlware from '@shared/middlewares/rate-limiter';
+import ErrorHandler from '@shared/utils/error-handler';
 
 import routes from './routes';
 

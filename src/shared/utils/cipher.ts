@@ -1,13 +1,8 @@
-import {
-  createCipheriv,
-  scryptSync,
-  createDecipheriv,
-  randomBytes,
-} from 'crypto';
+import { createCipheriv, scryptSync, createDecipheriv, randomBytes } from 'crypto';
 
 const algorithm = 'aes-192-cbc';
 
-const Cryptograph = (secret: string|null, password: string|null): string => {
+const Cryptograph = (secret: string | null, password: string | null): string => {
   if (!secret || !password) {
     throw new Error('invalid parameters');
   }
@@ -21,7 +16,7 @@ const Cryptograph = (secret: string|null, password: string|null): string => {
   return `${encrypted.toString('hex')}.${iv.toString('hex')}`;
 };
 
-const Decryptograph = (encrypted: string|null, password: string|null): string => {
+const Decryptograph = (encrypted: string | null, password: string | null): string => {
   if (!encrypted || !password) {
     throw new Error('invalid parameters');
   }

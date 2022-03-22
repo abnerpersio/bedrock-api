@@ -1,18 +1,12 @@
 import request from 'supertest';
 
-import { User } from '../models';
+import { User } from '../../models';
 
-import app from '../server';
+import app from '../../../server';
 
-import { defaultUser } from '../test/fixtures/user';
-import { mockAuth } from '../middlewares/auth.spec';
-
-export const mockUserModel = () => {
-  User.findById = jest.fn().mockResolvedValue(new User(defaultUser));
-  User.findOne = jest.fn().mockResolvedValue(new User(defaultUser));
-  User.create = jest.fn().mockResolvedValue(new User(defaultUser));
-  User.findOneAndDelete = jest.fn().mockResolvedValue(true);
-};
+import { defaultUser } from '@test-utils/fixtures/user';
+import { mockAuth } from '@test-utils/auth';
+import { mockUserModel } from '@test-utils/models/user';
 
 describe('User Controller', () => {
   beforeEach(() => {
@@ -21,13 +15,10 @@ describe('User Controller', () => {
   });
 
   async function mockAuthTokenRequest() {
-    return request(app)
-      .post('/login')
-      .set('Content-Type', 'application/json')
-      .send({
-        email: defaultUser.email,
-        password: defaultUser.password,
-      });
+    return request(app).post('/login').set('Content-Type', 'application/json').send({
+      email: defaultUser.email,
+      password: defaultUser.password,
+    });
   }
 
   test('It should create user', async () => {
@@ -71,9 +62,7 @@ describe('User Controller', () => {
   test('It should return logged user data', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
-      .get('/users')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get('/users').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.data.email).toBe(defaultUser.email);
@@ -83,9 +72,7 @@ describe('User Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
     User.findOne = jest.fn().mockResolvedValue(null);
 
-    const response = await request(app)
-      .get('/users')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).get('/users').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('user not found');
@@ -108,9 +95,7 @@ describe('User Controller', () => {
   test('It should delete user', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
-      .delete('/users')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).delete('/users').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(204);
   });
@@ -119,9 +104,7 @@ describe('User Controller', () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
     User.findOne = jest.fn().mockResolvedValue(null);
 
-    const response = await request(app)
-      .delete('/users')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await request(app).delete('/users').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
   });

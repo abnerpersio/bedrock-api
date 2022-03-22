@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
 import mongoose from 'mongoose';
-import { IUser } from '../interfaces/user';
+import { IUser } from '@shared/interfaces/user';
 import { User } from '../models';
-import { verifiyHash } from '../utils/hash';
-import { generateToken } from '../utils/jwt';
+import { verifiyHash } from '@shared/utils/hash';
+import { generateToken } from '@shared/utils/jwt';
 
 export class UserController {
   private User = User;
@@ -21,11 +21,14 @@ export class UserController {
       return;
     }
 
-    const user: mongoose.Document|null = await this.User.findOne({
-      email,
-    }, 'uuid email password');
+    const user: mongoose.Document | null = await this.User.findOne(
+      {
+        email,
+      },
+      'uuid email password',
+    );
 
-    const userFound: IUser|undefined = user?.toObject();
+    const userFound: IUser | undefined = user?.toObject();
 
     if (!userFound) {
       res.status(404).json({
@@ -57,12 +60,12 @@ export class UserController {
       success: true,
       data: { token },
     });
-  }
+  };
 
   index = async (req: Request, res: Response) => {
     const { uuid } = req.auth;
 
-    const userExists: IUser|null = await this.User.findOne({
+    const userExists: IUser | null = await this.User.findOne({
       uuid,
     });
 
@@ -93,7 +96,7 @@ export class UserController {
       return;
     }
 
-    const userExists: IUser|null = await this.User.findOne({
+    const userExists: IUser | null = await this.User.findOne({
       email,
     });
 
@@ -124,7 +127,7 @@ export class UserController {
   delete = async (req: Request, res: Response) => {
     const { uuid } = req.auth;
 
-    const userExists: IUser|null = await this.User.findOne({
+    const userExists: IUser | null = await this.User.findOne({
       uuid,
     });
 

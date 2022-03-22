@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { LIMIT_REQUESTS_BY_SECOND } from '../config/bootstrap';
+import { LIMIT_REQUESTS_BY_SECOND } from '@config/bootstrap';
 import MemoryIPStore from '../utils/memory-ip-store';
 
 const options = {
@@ -13,9 +13,9 @@ const store = new MemoryIPStore(options.windowMs);
 
 export default function RateLimiterMiddlware(req: Request, res: Response, next: NextFunction) {
   if (
-    typeof store.incr !== 'function'
-    || typeof store.resetKey !== 'function'
-    || typeof store.decrement !== 'function'
+    typeof store.incr !== 'function' ||
+    typeof store.resetKey !== 'function' ||
+    typeof store.decrement !== 'function'
   ) {
     throw new Error('The store is not valid.');
   }
