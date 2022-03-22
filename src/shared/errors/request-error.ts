@@ -1,13 +1,11 @@
+const DEFAULT_STATUS_CODE = 500;
 export class RequestError extends Error {
-  private readonly status: number;
+  public readonly statusCode: number;
 
-  constructor(message: string, statusCode = 500) {
+  constructor(message: string, statusCode = DEFAULT_STATUS_CODE) {
     super(message);
-    this.status = statusCode;
-  }
 
-  get statusCode(): number {
-    if (this.status > 500 || this.status < 0) return 500;
-    return this.status;
+    if (statusCode > 500 || statusCode < 0) this.statusCode = DEFAULT_STATUS_CODE;
+    else this.statusCode = statusCode;
   }
 }
