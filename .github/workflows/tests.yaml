@@ -25,9 +25,12 @@ jobs:
       # - uses: borales/actions-yarn@v2.3.0
       #   with:
       #     cmd: test
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: test:cov > OUT; sed -n 6,8p OUT > .github/workflows/COVERAGE_REPORT
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Collect test coverage
+        run: npm run test:cov > OUT; sed -n 6,8p OUT > .github/workflows/COVERAGE_REPORT
 
       - uses: harupy/comment-on-pr@master
         env:
