@@ -11,7 +11,7 @@ describe('Login test', () => {
     mockUserModel();
   });
 
-  test('It should login correctly', async () => {
+  it('should login correctly', async () => {
     const response = await request(app)
       .post('/login')
       .set('Content-Type', 'application/json')
@@ -24,7 +24,7 @@ describe('Login test', () => {
     expect(response.body.data.token).not.toBeFalsy();
   });
 
-  test('It should not login with invalid password', async () => {
+  it('should not login with invalid password', async () => {
     const response = await request(app)
       .post('/login')
       .set('Content-Type', 'application/json')
@@ -36,7 +36,7 @@ describe('Login test', () => {
     expect(response.status).toBe(401);
   });
 
-  test('It should not login with invalid login', async () => {
+  it('should not login with invalid login', async () => {
     const response = await request(app)
       .post('/login')
       .set('Content-Type', 'application/json')
@@ -47,14 +47,14 @@ describe('Login test', () => {
     expect(response.status).toBe(400);
   });
 
-  test('It should not authorize users without token', async () => {
+  it('should not authorize users without token', async () => {
     const response = await request(app).get('/users');
 
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('authentication token is required');
   });
 
-  test('It should not login with invalid token data', async () => {
+  it('should not login with invalid token data', async () => {
     jwt.verify = jest.fn().mockReturnValue(null);
 
     const response = await request(app).get('/users').set('Authorization', 'Bearer invalidtoken');
@@ -63,7 +63,7 @@ describe('Login test', () => {
     expect(response.body.message).toBe('invalid authentication');
   });
 
-  test('It should not login with expired token', async () => {
+  it('should not login with expired token', async () => {
     jwt.verify = jest.fn(() => {
       throw new Error('invalid_token');
     });

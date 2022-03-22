@@ -7,8 +7,9 @@ import { mockUserModel } from '@test-utils/models/user';
 
 import app from '../../../server';
 import { Safe } from '../../models';
+import { SafeController } from '../safe-controller';
 
-describe('Safe Controller', () => {
+describe(SafeController.name, () => {
   beforeEach(() => {
     mockUserModel();
     mockSafeModel();
@@ -21,7 +22,7 @@ describe('Safe Controller', () => {
     });
   }
 
-  test('It should create a safe successfully', async () => {
+  it('should create a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -36,7 +37,7 @@ describe('Safe Controller', () => {
     expect(response.body.data.name).toBe(defaultSafe.name);
   });
 
-  test('It should get all safes successfully', async () => {
+  it('should get all safes successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app).get('/safes').set('Authorization', `Bearer ${token}`);
@@ -45,7 +46,7 @@ describe('Safe Controller', () => {
     expect(response.body.data[0].name).toBe(defaultSafe.name);
   });
 
-  test('It should not get all safes 404', async () => {
+  it('should not get all safes 404', async () => {
     Safe.find = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
@@ -54,7 +55,7 @@ describe('Safe Controller', () => {
     expect(response.status).toBe(404);
   });
 
-  test('It should get a safe searching by name', async () => {
+  it('should get a safe searching by name', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -66,7 +67,7 @@ describe('Safe Controller', () => {
     expect(response.body.data.name).toBe(defaultSafe.name);
   });
 
-  test('It should get a safe searching by id', async () => {
+  it('should get a safe searching by id', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -78,7 +79,7 @@ describe('Safe Controller', () => {
     expect(response.body.data.name).toBe(defaultSafe.name);
   });
 
-  test('It should get a safe searching by uuid', async () => {
+  it('should get a safe searching by uuid', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -90,7 +91,7 @@ describe('Safe Controller', () => {
     expect(response.body.data.name).toBe(defaultSafe.name);
   });
 
-  test('It should return 404 with invalid safe name', async () => {
+  it('should return 404 with invalid safe name', async () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
@@ -102,7 +103,7 @@ describe('Safe Controller', () => {
     expect(response.status).toBe(404);
   });
 
-  test('It should update a safe successfully', async () => {
+  it('should update a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -117,7 +118,7 @@ describe('Safe Controller', () => {
     expect(response.body.data.name).toBe(defaultSafe.updatedName);
   });
 
-  test('It should not update a safe 404', async () => {
+  it('should not update a safe 404', async () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
@@ -132,7 +133,7 @@ describe('Safe Controller', () => {
     expect(response.status).toBe(404);
   });
 
-  test('It should delete a safe successfully', async () => {
+  it('should delete a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app)
@@ -142,7 +143,7 @@ describe('Safe Controller', () => {
     expect(response.status).toBe(204);
   });
 
-  test('It should not delete a safe 404', async () => {
+  it('should not delete a safe 404', async () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
