@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import mongoose from 'mongoose';
+
 import cipher from '@shared/utils/cipher';
 
 interface ISecretObject {

@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
+
+import { RequestError } from '@shared/errors/request-error';
+import { SafeNotFound } from '@shared/errors/safe-not-found';
 import { ISafe } from '@shared/interfaces/safe';
 import * as secretInterfaces from '@shared/interfaces/secret';
-import { Safe, Secret } from '../models';
 import cipher from '@shared/utils/cipher';
+
+import { Safe, Secret } from '../models';
 
 export class SecretController {
   private Secret = Secret;
@@ -13,12 +17,7 @@ export class SecretController {
     const { id } = req.auth;
 
     if (!req.query.safe && !req.query.owner) {
-      res.status(400).json({
-        success: false,
-        message: 'safe or owner is missing in query params',
-      });
-
-      return;
+      throw new RequestError('safe or owner is missing in query params', 400);
     }
 
     const safeId = (
@@ -45,14 +44,7 @@ export class SecretController {
       ],
     });
 
-    if (!secretsFound) {
-      res.status(404).json({
-        success: false,
-        message: 'secrets not found from this safe',
-      });
-
-      return;
-    }
+    if (!secretsFound) throw new RequestError('secrets not found from this safe', 404);
 
     res.json({
       success: true,
@@ -87,14 +79,7 @@ export class SecretController {
       ],
     });
 
-    if (!safeFound) {
-      res.status(404).json({
-        success: false,
-        message: 'secret not found',
-      });
-
-      return;
-    }
+    if (!safeFound) throw new RequestError('secret not found', 404);
 
     res.json({
       success: true,
@@ -117,14 +102,7 @@ export class SecretController {
       ],
     });
 
-    if (!isSafeValid) {
-      res.status(404).json({
-        success: false,
-        message: 'safe not found',
-      });
-
-      return;
-    }
+    if (!isSafeValid) throw new SafeNotFound();
 
     const secretsList: secretInterfaces.ISecret[] | null = await this.Secret.find({
       _id: { $in: isSafeValid?.secrets },
@@ -132,12 +110,7 @@ export class SecretController {
 
     // console.log(params);
     if (typeof params?.secret !== 'string' || typeof key !== 'string') {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid key in request query or secret in request body',
-      });
-
-      return;
+      throw new RequestError('Invalid key in request query or secret in request body', 400);
     }
 
     const encryptListResults = secretsList?.map((item) => {
@@ -152,12 +125,10 @@ export class SecretController {
     });
 
     if (encryptListResults.some((item) => !item)) {
-      res.status(400).json({
-        success: true,
-        message: 'Different keys: another secret in this safe is saved with another key',
-      });
-
-      return;
+      throw new RequestError(
+        'Different keys: another secret in this safe is saved with another key',
+        400,
+      );
     }
 
     const secretCreated: secretInterfaces.ISecret = await this.Secret.create({
@@ -201,12 +172,7 @@ export class SecretController {
     });
 
     if (!secretExists) {
-      res.status(404).json({
-        success: false,
-        message: 'secret not found',
-      });
-
-      return;
+      throw new RequestError('secret not found', 404);
     }
 
     const secretUpdated: secretInterfaces.ISecret | null = await this.Secret.findOneAndUpdate(
@@ -249,14 +215,7 @@ export class SecretController {
       ],
     });
 
-    if (!secretExists) {
-      res.status(404).json({
-        success: false,
-        message: 'secret not found',
-      });
-
-      return;
-    }
+    if (!secretExists) throw new RequestError('secret not found', 404);
 
     await this.Secret.findOneAndDelete({
       $and: [
@@ -287,12 +246,7 @@ export class SecretController {
     const { key } = req.body;
 
     if (!key || typeof key !== 'string') {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid key in request body',
-      });
-
-      return;
+      throw new RequestError('Invalid key in request body', 400);
     }
 
     const secretExists: secretInterfaces.ISecret | null = await this.Secret.findOne(
@@ -309,31 +263,18 @@ export class SecretController {
       'secret',
     );
 
-    if (!secretExists) {
-      res.status(404).json({
-        success: false,
-        message: 'secret not found',
-      });
-
-      return;
-    }
+    if (!secretExists) throw new RequestError('secret not found', 404);
 
     try {
-      const decoded = cipher.decrypt(secretExists.secret ? secretExists.secret : null, key);
-
-      if (!decoded) {
-        throw new Error();
-      }
+      const decoded = cipher.decrypt(secretExists.secret ?? null, key);
+      if (!decoded) throw new Error();
 
       res.json({
         success: true,
         data: decoded,
       });
-    } catch {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid key for this secret',
-      });
+    } catch (error) {
+      throw new RequestError('Invalid key for this secret', 401);
     }
   };
 }

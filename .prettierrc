@@ -9,5 +9,8 @@
   "parser": "typescript",
   "endOfLine": "lf",
   "bracketSpacing": true,
-  "useTabs": false
+  "useTabs": false,
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^@(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

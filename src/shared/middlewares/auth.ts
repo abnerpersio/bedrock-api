@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+
+import { RequestError } from '../errors/request-error';
 import { verifyToken } from '../utils/jwt';
 
 export default function AuthMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -6,23 +8,13 @@ export default function AuthMiddleware(req: Request, res: Response, next: NextFu
   const token = authorization?.split(' ')[1];
 
   if (!token) {
-    res.status(400).json({
-      success: false,
-      message: 'authentication token is required',
-    });
+    throw new RequestError('authentication token is required', 400);
   }
 
   try {
     const verified = verifyToken(token);
 
-    if (!verified) {
-      res.status(401).json({
-        success: false,
-        message: 'invalid authentication',
-      });
-
-      return;
-    }
+    if (!verified) throw new Error();
 
     req.auth = {
       id: verified.id,
@@ -31,12 +23,7 @@ export default function AuthMiddleware(req: Request, res: Response, next: NextFu
       token,
     };
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: 'invalid authentication',
-    });
-
-    return;
+    throw new RequestError('invalid authentication', 401);
   }
 
   next();

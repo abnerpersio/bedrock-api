@@ -1,15 +1,15 @@
 import request from 'supertest';
-import { Safe, Secret } from '../../models';
 
-import app from '../../../server';
+import cipher from '@shared/utils/cipher';
 import { defaultSafe } from '@test-utils/fixtures/safe';
-
 import { defaultSecret } from '@test-utils/fixtures/secret';
 import { defaultUser } from '@test-utils/fixtures/user';
-import cipher from '@shared/utils/cipher';
-import { mockUserModel } from '@test-utils/models/user';
 import { mockSafeModel } from '@test-utils/models/safe';
 import { mockSecretModel } from '@test-utils/models/secret';
+import { mockUserModel } from '@test-utils/models/user';
+
+import app from '../../../server';
+import { Safe, Secret } from '../../models';
 
 describe('Safe Controller', () => {
   beforeEach(() => {

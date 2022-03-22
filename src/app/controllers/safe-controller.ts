@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
+
+import { SafeNotFound } from '@shared/errors/safe-not-found';
 import * as safeInterfaces from '@shared/interfaces/safe';
+
 import { Safe } from '../models';
 
 export class SafeController {
@@ -12,14 +15,7 @@ export class SafeController {
       owner: id,
     });
 
-    if (!safesFound) {
-      res.status(404).json({
-        success: false,
-        message: 'safes not found from this user',
-      });
-
-      return;
-    }
+    if (!safesFound) throw new SafeNotFound();
 
     res.json({
       success: true,
@@ -40,14 +36,7 @@ export class SafeController {
       ],
     });
 
-    if (!safeFound) {
-      res.status(404).json({
-        success: false,
-        message: 'safe not found',
-      });
-
-      return;
-    }
+    if (!safeFound) throw new SafeNotFound();
 
     res.json({
       success: true,
@@ -78,14 +67,7 @@ export class SafeController {
       $and: [{ uuid }, { owner: userId }],
     });
 
-    if (!safeExists) {
-      res.status(404).json({
-        success: false,
-        message: 'safe not found',
-      });
-
-      return;
-    }
+    if (!safeExists) throw new SafeNotFound();
 
     const safeUpdated: safeInterfaces.ISafe | null = await this.Safe.findOneAndUpdate(
       { $and: [{ uuid }, { owner: userId }] },
@@ -107,14 +89,7 @@ export class SafeController {
       $and: [{ uuid }, { owner: userId }],
     });
 
-    if (!safeExists) {
-      res.status(404).json({
-        success: false,
-        message: 'safe not found',
-      });
-
-      return;
-    }
+    if (!safeExists) throw new SafeNotFound();
 
     await this.Safe.findOneAndDelete({
       $and: [{ uuid }, { owner: userId }],

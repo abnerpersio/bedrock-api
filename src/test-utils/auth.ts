@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+
 import { authToken, defaultUser } from './fixtures/user';
 
 export const mockAuth = () => {

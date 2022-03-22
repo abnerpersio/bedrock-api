@@ -16,8 +16,24 @@ jobs:
           node-version: '16'
           cache: 'npm'
       
+      # - name: Install Dependencies
+      # - uses: borales/actions-yarn@v2.3.0
+      #   with:
+      #     cmd: install
+
+      # - name: Run test
+      # - uses: borales/actions-yarn@v2.3.0
+      #   with:
+      #     cmd: test
+
       - name: Install dependencies
         run: npm install
 
-      - name: Run all Tests
-        run: npm run test
+      - name: Collect test coverage
+        run: npm run test:cov > OUT; sed -n 6,8p OUT > .github/workflows/COVERAGE_REPORT
+
+      - uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: COVERAGE_REPORT

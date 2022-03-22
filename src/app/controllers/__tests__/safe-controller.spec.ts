@@ -1,12 +1,12 @@
 import request from 'supertest';
-import { Safe } from '../../models';
-
-import app from '../../../server';
 
 import { defaultSafe } from '@test-utils/fixtures/safe';
 import { defaultUser } from '@test-utils/fixtures/user';
-import { mockUserModel } from '@test-utils/models/user';
 import { mockSafeModel } from '@test-utils/models/safe';
+import { mockUserModel } from '@test-utils/models/user';
+
+import app from '../../../server';
+import { Safe } from '../../models';
 
 describe('Safe Controller', () => {
   beforeEach(() => {

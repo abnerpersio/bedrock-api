@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
+
 import { SafeController } from '@controllers/safe-controller';
 import { SecretController } from '@controllers/secret-controller';
-
 import { UserController } from '@controllers/user-controller';
 import AuthMiddleware from '@shared/middlewares/auth';
 

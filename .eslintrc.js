@@ -33,6 +33,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'max-len': 'off',
     'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   settings: {
     'import/resolver': {

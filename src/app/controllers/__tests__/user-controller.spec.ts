@@ -1,12 +1,11 @@
 import request from 'supertest';
 
-import { User } from '../../models';
+import { mockAuth } from '@test-utils/auth';
+import { defaultUser } from '@test-utils/fixtures/user';
+import { mockUserModel } from '@test-utils/models/user';
 
 import app from '../../../server';
-
-import { defaultUser } from '@test-utils/fixtures/user';
-import { mockAuth } from '@test-utils/auth';
-import { mockUserModel } from '@test-utils/models/user';
+import { User } from '../../models';
 
 describe('User Controller', () => {
   beforeEach(() => {
