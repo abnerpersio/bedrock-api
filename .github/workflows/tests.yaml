@@ -1,0 +1,23 @@
+name: "Test pull request code"
+
+on:
+  pull_request
+
+jobs:
+  run:
+    runs-on: ubuntu-20.04  
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run all Tests
+        run: npm run test
