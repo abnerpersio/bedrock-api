@@ -62,7 +62,9 @@ export class SafeRepository {
     );
   }
 
-  async deleteSecret(safeId: mongoose.Types.ObjectId, secretId: mongoose.Types.ObjectId) {
+  async deleteSecret(safeId?: mongoose.Types.ObjectId, secretId?: mongoose.Types.ObjectId) {
+    if (!safeId || !secretId) return false;
+
     return this.safe.findOneAndUpdate(
       {
         _id: safeId,

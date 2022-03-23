@@ -76,7 +76,7 @@ export class SecretController {
 
     const secretsList = await this.secretRepository.findAllByIds(isSafeValid.secrets);
 
-    if (typeof secret !== 'string' || typeof key !== 'string') {
+    if (!secret || !key) {
       throw new RequestError('Invalid key in request query or secret in request body', 400);
     }
 
@@ -153,8 +153,7 @@ export class SecretController {
       owner,
     });
 
-    if (!secretExists || !secretExists.uuid || !secretExists._id || !secretExists.safe)
-      throw new SecretNotFound();
+    if (!secretExists || !secretExists.uuid || !secretExists._id) throw new SecretNotFound();
 
     await this.secretRepository.delete(secretExists.uuid);
     await this.safeRepository.deleteSecret(secretExists.safe, secretExists._id);

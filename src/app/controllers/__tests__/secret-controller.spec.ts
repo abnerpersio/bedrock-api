@@ -61,8 +61,10 @@ describe(SafeController.name, () => {
         safe: {
           uuid: defaultSecret.safe,
         },
-        name: defaultSecret.name,
-        secret: defaultSecret.secret,
+        params: {
+          name: defaultSecret.name,
+          secret: defaultSecret.secret,
+        },
       });
 
     expect(response.status).toBe(400);
@@ -80,8 +82,11 @@ describe(SafeController.name, () => {
         safe: {
           uuid: 'invalidsafeid',
         },
-        name: defaultSecret.name,
-        secret: defaultSecret.secret,
+        params: {
+          name: defaultSecret.name,
+          secret: defaultSecret.secret,
+        },
+        key: defaultSecret.key,
       });
 
     expect(response.status).toBe(404);
