@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypt
 
 const algorithm = 'aes-192-cbc';
 
-const Cryptograph = (secret: string | null, password: string | null): string => {
+export function encrypt(secret: string | null, password: string | null): string {
   if (!secret || !password) {
     throw new Error('invalid parameters');
   }
@@ -14,9 +14,9 @@ const Cryptograph = (secret: string | null, password: string | null): string => 
   const encrypted = Buffer.concat([cipher.update(secret), cipher.final()]);
 
   return `${encrypted.toString('hex')}.${iv.toString('hex')}`;
-};
+}
 
-const Decryptograph = (encrypted: string | null, password: string | null): string | null => {
+export function decrypt(encrypted: string | null, password: string | null): string | null {
   if (!encrypted || !password) return null;
 
   const [secret, iv] = encrypted?.split('.');
@@ -28,9 +28,4 @@ const Decryptograph = (encrypted: string | null, password: string | null): strin
   const decrypted = Buffer.concat([decipher.update(Buffer.from(secret, 'hex')), decipher.final()]);
 
   return decrypted.toString();
-};
-
-export default {
-  encrypt: Cryptograph,
-  decrypt: Decryptograph,
-};
+}

@@ -6,3 +6,13 @@ export interface IUser {
   email?: string;
   password?: string;
 }
+
+export type UserFindByEmail = {
+  email: string;
+  select?: string;
+};
+
+export type UserCreate = {
+  email: string;
+  password: string;
+};

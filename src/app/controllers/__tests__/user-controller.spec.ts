@@ -6,8 +6,9 @@ import { mockUserModel } from '@test-utils/models/user';
 
 import app from '../../../server';
 import { User } from '../../models';
+import { UserController } from '../user-controller';
 
-describe('User Controller', () => {
+describe(UserController.name, () => {
   beforeEach(() => {
     mockUserModel();
     mockAuth();
@@ -20,7 +21,7 @@ describe('User Controller', () => {
     });
   }
 
-  test('It should create user', async () => {
+  it('should create user', async () => {
     User.findOne = jest.fn().mockResolvedValue(null);
 
     const response = await request(app)
@@ -35,7 +36,7 @@ describe('User Controller', () => {
     expect(response.body.data.email).toBe(defaultUser.email);
   });
 
-  test('It should not create user with existing email', async () => {
+  it('should not create user with existing email', async () => {
     const response = await request(app)
       .post('/users')
       .set('Content-Type', 'application/json')
@@ -47,7 +48,7 @@ describe('User Controller', () => {
     expect(response.status).toBe(400);
   });
 
-  test('It should not create user without data', async () => {
+  it('should not create user without data', async () => {
     const response = await request(app)
       .post('/users')
       .set('Content-Type', 'application/json')
@@ -58,7 +59,7 @@ describe('User Controller', () => {
     expect(response.status).toBe(400);
   });
 
-  test('It should return logged user data', async () => {
+  it('should return logged user data', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app).get('/users').set('Authorization', `Bearer ${token}`);
@@ -67,7 +68,7 @@ describe('User Controller', () => {
     expect(response.body.data.email).toBe(defaultUser.email);
   });
 
-  test('It should return 404 user not found /users', async () => {
+  it('should return 404 user not found /users', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
     User.findOne = jest.fn().mockResolvedValue(null);
 
@@ -77,7 +78,7 @@ describe('User Controller', () => {
     expect(response.body.message).toBe('user not found');
   });
 
-  test('It should return 404 user not found in login', async () => {
+  it('should return 404 user not found in login', async () => {
     User.findOne = jest.fn().mockResolvedValue(null);
     const response = await request(app)
       .post('/login')
@@ -91,7 +92,7 @@ describe('User Controller', () => {
     expect(response.body.message).toBe('user with this email was not found');
   });
 
-  test('It should delete user', async () => {
+  it('should delete user', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(app).delete('/users').set('Authorization', `Bearer ${token}`);
@@ -99,7 +100,7 @@ describe('User Controller', () => {
     expect(response.status).toBe(204);
   });
 
-  test('It should not delete user 404', async () => {
+  it('should not delete user 404', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
     User.findOne = jest.fn().mockResolvedValue(null);
 
