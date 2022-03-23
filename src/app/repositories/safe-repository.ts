@@ -1,19 +1,21 @@
+import mongoose from 'mongoose';
+
 import {
-  CreateSafe,
-  DeleteSafe,
-  FindByUuid,
   ISafe,
-  SearchSafe,
-  UpdateSafe,
+  SafeCreate,
+  SafeDelete,
+  SafeFindByUuid,
+  SafeSearch,
+  SafeUpdate,
 } from '@shared/interfaces/safe';
 
 import { Safe } from '../models';
 
 export class SafeRepository {
-  private Safe = Safe;
+  private readonly safe = Safe;
 
-  async search({ owner, name, id, uuid }: SearchSafe): Promise<ISafe | null> {
-    return this.Safe.findOne({
+  async search({ owner, name, id, uuid }: SafeSearch): Promise<ISafe | null> {
+    return this.safe.findOne({
       $and: [
         {
           $or: [{ name }, { _id: id }, { uuid }],
@@ -23,31 +25,49 @@ export class SafeRepository {
     });
   }
 
-  async findByUuid({ owner, uuid }: FindByUuid): Promise<ISafe | null> {
-    return this.Safe.findOne({
+  async findByUuid({ owner, uuid }: SafeFindByUuid): Promise<ISafe | null> {
+    return this.safe.findOne({
       owner,
       uuid,
     });
   }
 
   async findAllByOwner(owner: string): Promise<ISafe[] | null> {
-    return this.Safe.find({
+    return this.safe.find({
       owner,
     });
   }
 
-  async create({ owner, name }: CreateSafe): Promise<ISafe> {
-    return this.Safe.create({
+  async create({ owner, name }: SafeCreate): Promise<ISafe> {
+    return this.safe.create({
       owner,
       name,
     });
   }
 
-  async update({ uuid, data }: UpdateSafe): Promise<ISafe | null> {
-    return this.Safe.findOneAndUpdate({ uuid }, data, { new: false });
+  async update({ uuid, data }: SafeUpdate): Promise<ISafe | null> {
+    return this.safe.findOneAndUpdate({ uuid }, data, { new: false });
   }
 
-  async delete({ owner, uuid }: DeleteSafe) {
-    await this.Safe.findOneAndDelete({ owner, uuid });
+  async delete({ owner, uuid }: SafeDelete) {
+    await this.safe.findOneAndDelete({ owner, uuid });
+  }
+
+  async addSecret(safeId: mongoose.Types.ObjectId, secretId: mongoose.Types.ObjectId) {
+    return this.safe.findOneAndUpdate(
+      {
+        _id: safeId,
+      },
+      { $push: { secrets: secretId } },
+    );
+  }
+
+  async deleteSecret(safeId: mongoose.Types.ObjectId, secretId: mongoose.Types.ObjectId) {
+    return this.safe.findOneAndUpdate(
+      {
+        _id: safeId,
+      },
+      { $pull: { secrets: secretId } },
+    );
   }
 }

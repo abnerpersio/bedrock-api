@@ -1,15 +1,13 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 
 import { RequestError } from '@shared/errors/request-error';
-import { IUser } from '@shared/interfaces/user';
 import { verifiyHash } from '@shared/utils/hash';
 import { generateToken } from '@shared/utils/jwt';
 
-import { User } from '../models';
+import { UserRepository } from '../repositories/user-repository';
 
 export class UserController {
-  private User = User;
+  private readonly userRepository = new UserRepository();
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -18,25 +16,23 @@ export class UserController {
       throw new RequestError('email and password are required fields', 400);
     }
 
-    const user: mongoose.Document | null = await this.User.findOne(
-      {
-        email,
-      },
-      'uuid email password',
-    );
+    const user = await this.userRepository.findByEmail({
+      email,
+      select: 'uuid email password',
+    });
 
-    const userFound: IUser | undefined = user?.toObject();
+    if (!user) throw new RequestError('user with this email was not found', 404);
 
-    if (!userFound) throw new RequestError('user with this email was not found', 404);
+    const { password: userPassword, uuid } = user;
 
-    const isPasswordVerified = verifiyHash(userFound.password, password);
+    const isPasswordVerified = verifiyHash(userPassword, password);
 
     if (!isPasswordVerified) throw new RequestError('wrong passsword', 401);
 
     const token = generateToken({
-      id: userFound._id,
-      uuid: userFound.uuid,
-      email: userFound.email,
+      id: user._id,
+      uuid,
+      email,
     });
 
     res.json({
@@ -48,9 +44,7 @@ export class UserController {
   index = async (req: Request, res: Response) => {
     const { uuid } = req.auth;
 
-    const userExists: IUser | null = await this.User.findOne({
-      uuid,
-    });
+    const userExists = await this.userRepository.findByUuid(uuid);
 
     if (!userExists) throw new RequestError('user not found', 404);
 
@@ -65,39 +59,33 @@ export class UserController {
 
     if (!email || !password) throw new RequestError('email and password are required fields', 400);
 
-    const userExists: IUser | null = await this.User.findOne({
+    const userExists = await this.userRepository.findByEmail({
       email,
     });
 
     if (userExists) throw new RequestError('user with this email already exists', 400);
 
-    const createdUser: IUser = (
-      await this.User.create({
-        email,
-        password,
-      })
-    ).toObject();
+    const user = await this.userRepository.create({
+      email,
+      password,
+    });
 
-    delete createdUser.password;
+    delete user.password;
 
     res.json({
       success: true,
-      data: createdUser,
+      data: user,
     });
   };
 
   delete = async (req: Request, res: Response) => {
     const { uuid } = req.auth;
 
-    const userExists: IUser | null = await this.User.findOne({
-      uuid,
-    });
+    const userExists = await this.userRepository.findByUuid(uuid);
 
     if (!userExists) throw new RequestError('user not found', 404);
 
-    await this.User.findOneAndDelete({
-      uuid,
-    });
+    await this.userRepository.delete(uuid);
 
     res.sendStatus(204);
   };
