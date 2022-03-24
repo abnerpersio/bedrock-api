@@ -5,9 +5,18 @@ import { SecretController } from '@controllers/secret-controller';
 import { UserController } from '@controllers/user-controller';
 import AuthMiddleware from '@shared/middlewares/auth';
 
-const userController = new UserController();
-const safeController = new SafeController();
-const secretController = new SecretController();
+import { SafeRepository } from './app/repositories/safe-repository';
+import { SecretRepository } from './app/repositories/secret-repository';
+import { UserRepository } from './app/repositories/user-repository';
+
+const userRepository = new UserRepository();
+const userController = new UserController(userRepository);
+
+const safeRepository = new SafeRepository();
+const safeController = new SafeController(safeRepository);
+
+const secretRepository = new SecretRepository();
+const secretController = new SecretController(secretRepository, safeRepository);
 
 const routes = Router();
 

@@ -6,7 +6,11 @@ import * as safeInterfaces from '@shared/interfaces/safe';
 import { SafeRepository } from '../repositories/safe-repository';
 
 export class SafeController {
-  private safeRepository = new SafeRepository();
+  private readonly safeRepository: SafeRepository;
+
+  constructor(safeRepository: SafeRepository) {
+    this.safeRepository = safeRepository;
+  }
 
   list = async (req: Request, res: Response) => {
     const { id: owner } = req.auth;

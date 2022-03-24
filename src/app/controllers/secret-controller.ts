@@ -15,8 +15,13 @@ import { SafeRepository } from '../repositories/safe-repository';
 import { SecretRepository } from '../repositories/secret-repository';
 
 export class SecretController {
-  private readonly safeRepository = new SafeRepository();
-  private readonly secretRepository = new SecretRepository();
+  private readonly safeRepository: SafeRepository;
+  private readonly secretRepository: SecretRepository;
+
+  constructor(secretRepository: SecretRepository, safeRepository: SafeRepository) {
+    this.safeRepository = safeRepository;
+    this.secretRepository = secretRepository;
+  }
 
   list = async (req: Request, res: Response) => {
     const { id: owner } = req.auth;

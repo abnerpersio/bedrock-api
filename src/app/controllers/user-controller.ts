@@ -7,7 +7,11 @@ import { generateToken } from '@shared/utils/jwt';
 import { UserRepository } from '../repositories/user-repository';
 
 export class UserController {
-  private readonly userRepository = new UserRepository();
+  private readonly userRepository: UserRepository;
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository;
+  }
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
