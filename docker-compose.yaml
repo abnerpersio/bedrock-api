@@ -3,7 +3,7 @@ version: "3.0"
 services:
   api:
     build:
-      dockerfile: ./.docker/api/Dockerfile
+      dockerfile: ./Dockerfile
       context: .
     ports:
       - "8080:80"
