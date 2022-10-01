@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import { resolve } from 'path';
 
 declare let process: {
   env: {
@@ -12,12 +11,7 @@ declare let process: {
   };
 };
 
-config({
-  path:
-    process.env.NODE_ENV === 'test'
-      ? resolve(__dirname, '..', '..', '.env.test')
-      : resolve(__dirname, '..', '..', '.env'),
-});
+config();
 
 export const { DB_URI } = process.env;
 export const { DB_USER } = process.env;

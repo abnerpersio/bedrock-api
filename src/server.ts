@@ -2,20 +2,18 @@ import express from 'express';
 import 'express-async-errors';
 
 import '@config/bootstrap';
-import HeadersRemoverMiddleware from '@shared/middlewares/headers-remover';
-import RateLimiterMiddlware from '@shared/middlewares/rate-limiter';
-import ErrorHandler from '@shared/utils/error-handler';
+import { ErrorHandler } from '@shared/middlewares/error-handler';
+import { HeadersRemoverMiddleware } from '@shared/middlewares/headers-remover';
+import { RateLimiterMiddlware } from '@shared/middlewares/rate-limiter';
 
 import './app/models';
-import routes from './routes';
+import { routes } from './routes';
 
-const app = express();
+export const server = express();
 
-app.use(express.json());
+server.use(express.json());
 
-app.use(RateLimiterMiddlware);
-app.use(HeadersRemoverMiddleware);
-app.use(routes);
-app.use(ErrorHandler);
-
-export default app;
+server.use(RateLimiterMiddlware);
+server.use(HeadersRemoverMiddleware);
+server.use(routes);
+server.use(ErrorHandler);

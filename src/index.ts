@@ -1,12 +1,9 @@
-import pino from 'pino';
-
 import '@config/bootstrap';
 import '@config/database';
+import { logger } from '@config/logger';
 
-import app from './server';
-
-const logger = pino();
+import { server } from './server';
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => logger.info(`Server is running at http://localhost:${PORT}`));
+server.listen(PORT, () => logger.info(`Server is running at http://localhost:${PORT}`));

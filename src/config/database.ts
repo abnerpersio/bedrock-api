@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
-import pino from 'pino';
 
-import { DB_PASS, DB_URI, DB_USER } from './bootstrap';
-
-const logger = pino();
+import { DB_PASS, DB_URI, DB_USER } from '@config/bootstrap';
+import { logger } from '@config/logger';
 
 mongoose
   .connect(DB_URI, {
