@@ -31,7 +31,7 @@ describe('UserController', () => {
         password: defaultUser.password,
       });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.data.email).toBe(defaultUser.email);
   });
 

@@ -7,9 +7,8 @@ import { mockUserModel } from '@test-utils/models/user';
 
 import { server } from '../../../server';
 import { Safe } from '../../models';
-import { SafeController } from '../safe-controller';
 
-describe(SafeController.name, () => {
+describe('SafeController', () => {
   beforeEach(() => {
     mockUserModel();
     mockSafeModel();
@@ -33,7 +32,7 @@ describe(SafeController.name, () => {
         name: defaultSafe.name,
       });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.data.name).toBe(defaultSafe.name);
   });
 
@@ -47,7 +46,7 @@ describe(SafeController.name, () => {
   });
 
   it('should not get all safes 404', async () => {
-    Safe.find = jest.fn().mockResolvedValue(null);
+    Safe.find = jest.fn().mockResolvedValue([]);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(server).get('/safes').set('Authorization', `Bearer ${token}`);

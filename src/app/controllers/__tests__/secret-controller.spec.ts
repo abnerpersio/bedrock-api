@@ -10,9 +10,8 @@ import { mockUserModel } from '@test-utils/models/user';
 
 import { server } from '../../../server';
 import { Safe, Secret } from '../../models';
-import { SafeController } from '../safe-controller';
 
-describe(SafeController.name, () => {
+describe('SecretController', () => {
   beforeEach(() => {
     mockUserModel();
     mockSafeModel();
