@@ -1,16 +1,12 @@
 import { Request, Response } from 'express';
 
 import { SafeNotFound } from '@shared/errors/safe-not-found';
-import * as safeInterfaces from '@shared/interfaces/safe';
+import * as safeInterfaces from '@shared/types/safe';
 
 import { SafeRepository } from '../repositories/safe-repository';
 
 export class SafeController {
-  private readonly safeRepository: SafeRepository;
-
-  constructor(safeRepository: SafeRepository) {
-    this.safeRepository = safeRepository;
-  }
+  constructor(private readonly safeRepository: SafeRepository) {}
 
   list = async (req: Request, res: Response) => {
     const { id: owner } = req.auth;
@@ -25,7 +21,7 @@ export class SafeController {
     });
   };
 
-  search = async (req: Request<unknown, unknown, safeInterfaces.ISafeSearch>, res: Response) => {
+  search = async (req: Request<unknown, unknown, safeInterfaces.SafeSearch>, res: Response) => {
     const { id: owner } = req.auth;
     const { name, id: safeId, uuid } = req.body;
 
@@ -44,7 +40,7 @@ export class SafeController {
     });
   };
 
-  store = async (req: Request<unknown, unknown, safeInterfaces.ISafeCreate>, res: Response) => {
+  store = async (req: Request<unknown, unknown, safeInterfaces.SafeCreate>, res: Response) => {
     const { id: owner } = req.auth;
     const { name } = req.body;
 

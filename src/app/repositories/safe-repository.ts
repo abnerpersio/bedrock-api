@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 
 import {
-  ISafe,
+  Safe,
   SafeCreate,
   SafeDelete,
   SafeFindByUuid,
   SafeSearch,
   SafeUpdate,
-} from '@shared/interfaces/safe';
+} from '@shared/types/safe';
 
-import { Safe } from '../models';
+import { Safe as SafeModel } from '../models';
 
 export class SafeRepository {
-  private readonly safe = Safe;
+  private readonly safe = SafeModel;
 
-  async search({ owner, name, id, uuid }: SafeSearch): Promise<ISafe | null> {
+  async search({ owner, name, id, uuid }: SafeSearch): Promise<Safe | null> {
     return this.safe.findOne({
       $and: [
         {
@@ -25,27 +25,27 @@ export class SafeRepository {
     });
   }
 
-  async findByUuid({ owner, uuid }: SafeFindByUuid): Promise<ISafe | null> {
+  async findByUuid({ owner, uuid }: SafeFindByUuid): Promise<Safe | null> {
     return this.safe.findOne({
       owner,
       uuid,
     });
   }
 
-  async findAllByOwner(owner: string): Promise<ISafe[] | null> {
+  async findAllByOwner(owner: string): Promise<Safe[] | null> {
     return this.safe.find({
       owner,
     });
   }
 
-  async create({ owner, name }: SafeCreate): Promise<ISafe> {
+  async create({ owner, name }: SafeCreate): Promise<Safe> {
     return this.safe.create({
       owner,
       name,
     });
   }
 
-  async update({ uuid, data }: SafeUpdate): Promise<ISafe | null> {
+  async update({ uuid, data }: SafeUpdate): Promise<Safe | null> {
     return this.safe.findOneAndUpdate({ uuid }, data, { new: false });
   }
 

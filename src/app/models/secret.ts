@@ -3,10 +3,10 @@ import mongoose from 'mongoose';
 
 import { encrypt } from '@shared/utils/crypto';
 
-interface ISecretObject {
+type SecretObject = {
   secret?: string;
   key?: string;
-}
+};
 
 const SecretSchema = new mongoose.Schema(
   {
@@ -23,7 +23,7 @@ const SecretSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false,
-      set: (value: ISecretObject) => {
+      set: (value: SecretObject) => {
         const { secret, key } = value;
 
         if (!secret || !key) {

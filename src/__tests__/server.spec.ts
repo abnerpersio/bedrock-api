@@ -1,9 +1,9 @@
 import request from 'supertest';
 
-import app from '../server';
+import { server } from '../server';
 
 it('should verify if the server is working', async () => {
-  const response = await request(app).get('/ping');
+  const response = await request(server).get('/ping');
 
   expect(response.status).toBe(200);
   expect(response.body.success).toBe(true);

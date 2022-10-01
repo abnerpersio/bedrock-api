@@ -13,7 +13,7 @@ services:
       DB_USER: root
       DB_PASS: root
       JWT_SECRET: jwt_secret
-      LIMIT_REQUESTS_BY_SECOND: 10
+      LIMIT_REQUESTS_BY_PERIOD: 10
     networks:
       default:
         aliases:

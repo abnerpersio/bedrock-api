@@ -1,41 +1,42 @@
 import mongoose from 'mongoose';
 
 import {
-  ISecret,
+  Secret,
   SecretCreate,
   SecretFindByOnwner,
   SecretFindByUuid,
   SecretSearch,
   SecretUpdate,
-} from '../../shared/interfaces/secret';
-import { Secret } from '../models';
+} from '@shared/types/secret';
+
+import { Secret as SecretModel } from '../models';
 
 export class SecretRepository {
-  private readonly secret = Secret;
+  private readonly secret = SecretModel;
 
-  async search({ owner, name, id, uuid }: SecretSearch): Promise<ISecret | null> {
+  async search({ owner, name, id, uuid }: SecretSearch): Promise<Secret | null> {
     return this.secret.findOne({
       $or: [{ name }, { _id: id }, { uuid }],
       owner,
     });
   }
 
-  async findAllByIds(secretsIds?: string[]): Promise<ISecret[] | null> {
+  async findAllByIds(secretsIds?: string[]): Promise<Secret[] | null> {
     return this.secret.find({ _id: { $in: secretsIds } });
   }
 
-  async findAllByOwner({ safeId, owner }: SecretFindByOnwner): Promise<ISecret[] | null> {
+  async findAllByOwner({ safeId, owner }: SecretFindByOnwner): Promise<Secret[] | null> {
     return this.secret.find({
       $or: [{ safe: new mongoose.mongo.ObjectId(safeId) }],
       owner,
     });
   }
 
-  async findByUuid({ uuid, owner, select }: SecretFindByUuid): Promise<ISecret | null> {
+  async findByUuid({ uuid, owner, select }: SecretFindByUuid): Promise<Secret | null> {
     return this.secret.findOne({ uuid, owner }, select);
   }
 
-  async create({ owner, name, secret, key, safeId }: SecretCreate): Promise<ISecret> {
+  async create({ owner, name, secret, key, safeId }: SecretCreate): Promise<Secret> {
     return this.secret.create({
       name: name,
       secret: {

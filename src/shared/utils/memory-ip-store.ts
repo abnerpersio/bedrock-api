@@ -1,11 +1,8 @@
 export class MemoryIPStore {
-  private readonly windowMs: number;
   private readonly interval: NodeJS.Timer;
   private storage: { ip: string; count: number }[] = [];
 
-  constructor(windowMs: number) {
-    this.windowMs = windowMs;
-
+  constructor(private readonly windowMs: number) {
     this.interval = setInterval(this.resetAll, this.windowMs);
 
     if (this.interval.unref) {
@@ -13,7 +10,7 @@ export class MemoryIPStore {
     }
   }
 
-  increment(key: string): number {
+  increment = (key: string): number => {
     const index = this.storage.findIndex(({ ip }) => ip === key);
 
     if (index >= 0) {
@@ -23,9 +20,9 @@ export class MemoryIPStore {
 
     this.storage.push({ ip: key, count: 1 });
     return 1;
-  }
+  };
 
-  resetAll() {
+  resetAll = () => {
     this.storage = [];
-  }
+  };
 }

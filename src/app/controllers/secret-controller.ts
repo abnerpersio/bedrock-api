@@ -2,15 +2,15 @@ import { Request, Response } from 'express';
 
 import { RequestError } from '@shared/errors/request-error';
 import { SafeNotFound } from '@shared/errors/safe-not-found';
+import { SecretNotFound } from '@shared/errors/secret-not-found';
+import {
+  DecodeSearch,
+  SecretCreateParams,
+  SecretSearch,
+  SecretUpdateParams,
+} from '@shared/types/secret';
 import { decrypt } from '@shared/utils/crypto';
 
-import { SecretNotFound } from '../../shared/errors/secret-not-found';
-import {
-  IDecodeSearch,
-  ISecretCreate,
-  ISecretSearch,
-  ISecretUpdate,
-} from '../../shared/interfaces/secret';
 import { SafeRepository } from '../repositories/safe-repository';
 import { SecretRepository } from '../repositories/secret-repository';
 
@@ -45,7 +45,7 @@ export class SecretController {
     });
   };
 
-  search = async (req: Request<unknown, unknown, ISecretSearch>, res: Response) => {
+  search = async (req: Request<unknown, unknown, SecretSearch>, res: Response) => {
     const { id: owner } = req.auth;
     const { id: safeId, name, uuid } = req.body;
 
@@ -64,7 +64,7 @@ export class SecretController {
     });
   };
 
-  store = async (req: Request<unknown, unknown, ISecretCreate>, res: Response) => {
+  store = async (req: Request<unknown, unknown, SecretCreateParams>, res: Response) => {
     const { id: owner } = req.auth;
     const {
       params: { name, secret },
@@ -123,7 +123,7 @@ export class SecretController {
     });
   };
 
-  update = async (req: Request<{ uuid: string }, unknown, ISecretUpdate>, res: Response) => {
+  update = async (req: Request<{ uuid: string }, unknown, SecretUpdateParams>, res: Response) => {
     const { id: owner } = req.auth;
     const { uuid } = req.params;
     const { name, secret } = req.body;
@@ -166,7 +166,7 @@ export class SecretController {
     res.sendStatus(204);
   };
 
-  decode = async (req: Request<{ uuid: string }, unknown, IDecodeSearch>, res: Response) => {
+  decode = async (req: Request<{ uuid: string }, unknown, DecodeSearch>, res: Response) => {
     const { id: owner } = req.auth;
     const { key } = req.body;
     const { uuid } = req.params;

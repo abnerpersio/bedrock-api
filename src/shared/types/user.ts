@@ -16,3 +16,10 @@ export type UserCreate = {
   email: string;
   password: string;
 };
+
+export type Auth = {
+  id: string;
+  uuid: string;
+  token: string;
+  email: string;
+};

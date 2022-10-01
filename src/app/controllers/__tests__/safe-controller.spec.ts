@@ -5,7 +5,7 @@ import { defaultUser } from '@test-utils/fixtures/user';
 import { mockSafeModel } from '@test-utils/models/safe';
 import { mockUserModel } from '@test-utils/models/user';
 
-import app from '../../../server';
+import { server } from '../../../server';
 import { Safe } from '../../models';
 import { SafeController } from '../safe-controller';
 
@@ -16,7 +16,7 @@ describe(SafeController.name, () => {
   });
 
   async function mockAuthTokenRequest() {
-    return request(app).post('/login').set('Content-Type', 'application/json').send({
+    return request(server).post('/login').set('Content-Type', 'application/json').send({
       email: defaultUser.email,
       password: defaultUser.password,
     });
@@ -25,7 +25,7 @@ describe(SafeController.name, () => {
   it('should create a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .post('/safes')
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
@@ -40,7 +40,7 @@ describe(SafeController.name, () => {
   it('should get all safes successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app).get('/safes').set('Authorization', `Bearer ${token}`);
+    const response = await request(server).get('/safes').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.data[0].name).toBe(defaultSafe.name);
@@ -50,7 +50,7 @@ describe(SafeController.name, () => {
     Safe.find = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app).get('/safes').set('Authorization', `Bearer ${token}`);
+    const response = await request(server).get('/safes').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
   });
@@ -58,7 +58,7 @@ describe(SafeController.name, () => {
   it('should get a safe searching by name', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .post('/safes/search')
       .set('Authorization', `Bearer ${token}`)
       .send({ name: defaultSafe.name });
@@ -70,7 +70,7 @@ describe(SafeController.name, () => {
   it('should get a safe searching by id', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .post('/safes/search')
       .set('Authorization', `Bearer ${token}`)
       .send({ id: defaultSafe._id });
@@ -82,7 +82,7 @@ describe(SafeController.name, () => {
   it('should get a safe searching by uuid', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .post('/safes/search')
       .set('Authorization', `Bearer ${token}`)
       .send({ uuid: defaultSafe.uuid });
@@ -95,7 +95,7 @@ describe(SafeController.name, () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .post('/safes/search')
       .set('Authorization', `Bearer ${token}`)
       .send({ name: 'invalidname' });
@@ -106,7 +106,7 @@ describe(SafeController.name, () => {
   it('should update a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .put(`/safes/${defaultSafe.uuid}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
@@ -122,7 +122,7 @@ describe(SafeController.name, () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .put(`/safes/${defaultSafe.uuid}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', `Bearer ${token}`)
@@ -136,7 +136,7 @@ describe(SafeController.name, () => {
   it('should delete a safe successfully', async () => {
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .delete(`/safes/${defaultSafe.uuid}`)
       .set('Authorization', `Bearer ${token}`);
 
@@ -147,7 +147,7 @@ describe(SafeController.name, () => {
     Safe.findOne = jest.fn().mockResolvedValue(null);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
-    const response = await request(app)
+    const response = await request(server)
       .delete(`/safes/${defaultSafe.uuid}`)
       .set('Authorization', `Bearer ${token}`);
 
