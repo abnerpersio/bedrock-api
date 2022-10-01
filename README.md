@@ -1,6 +1,8 @@
-# bedrock-api
+# Bedrock API
 
-This is a project created in KAC and for learning about security in my Node.JS apps.
+<img alt="Bloco de bedrock do Minecraft" src="./assets/bedrock.png" width="100px" />
+
+This is a project created for learning about security in my Node.JS apps.
 
 I learned a lot of things about Metasploit, nmap function, Rate Limiter, NGINX, Docker, Jest testings with MongoDB and made my think about a lot of thinks. 
 
@@ -39,7 +41,6 @@ run `npm run dev` or `yarn dev` to see your changes happening in real time
 
 - Typescript
 - Express
-- Mongoose 
 - MongoDB
 - Docker
 - NGINX
