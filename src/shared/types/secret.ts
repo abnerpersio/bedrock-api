@@ -1,20 +1,14 @@
 import mongoose from 'mongoose';
 
-export interface ISecret {
+export type Secret = {
   _id?: mongoose.Types.ObjectId;
   safe?: mongoose.Types.ObjectId;
   uuid?: string;
   name?: string;
   secret?: string;
-}
+};
 
-export interface ISecretSearch {
-  name?: string;
-  id?: string;
-  uuid?: string;
-}
-
-export interface ISecretCreate {
+export type SecretCreateParams = {
   key: string;
   safe: {
     uuid: string;
@@ -23,16 +17,16 @@ export interface ISecretCreate {
     name: string;
     secret: string;
   };
-}
+};
 
-export interface ISecretUpdate {
+export type SecretUpdateParams = {
   name: string;
   secret: string;
-}
+};
 
-export interface IDecodeSearch {
+export type DecodeSearch = {
   key: string;
-}
+};
 
 export type SecretFindByOnwner = {
   owner: string;

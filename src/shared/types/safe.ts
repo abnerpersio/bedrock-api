@@ -1,34 +1,24 @@
 import mongoose from 'mongoose';
 
-export interface ISafe {
+export type Safe = {
   _id?: mongoose.Types.ObjectId;
   owner?: mongoose.Types.ObjectId;
   uuid?: string;
   name?: string;
   password?: string;
   secrets?: string[];
-}
+};
 
-export interface ISafeSearch {
-  name?: string;
-  id?: string;
-  uuid?: string;
-}
-
-export interface ISafeCreate {
+export type SafeCreate = {
   name: string;
-}
+  owner?: string;
+};
 
 export type SafeSearch = {
   owner: string;
   name?: string;
   id?: string;
   uuid?: string;
-};
-
-export type SafeCreate = {
-  name: string;
-  owner: string;
 };
 
 export type SafeFindByUuid = {

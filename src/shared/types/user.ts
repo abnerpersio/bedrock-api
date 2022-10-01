@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
-export interface IUser {
+export type User = {
   _id?: mongoose.Types.ObjectId;
   uuid?: string;
   email?: string;
   password?: string;
-}
+};
 
 export type UserFindByEmail = {
   email: string;
