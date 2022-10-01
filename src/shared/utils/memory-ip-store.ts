@@ -1,27 +1,10 @@
-function calculateNextResetTime(windowMs: number): Date {
-  const d = new Date();
-  d.setMilliseconds(d.getMilliseconds() + windowMs);
-  return d;
-}
-
-interface KeyStore {
-  ip: string;
-  count: number;
-}
-
-class MemoryIPStore {
-  windowMs: number;
-
-  storage: KeyStore[];
-
-  resetTime: Date;
-
-  interval: any;
+export class MemoryIPStore {
+  private readonly windowMs: number;
+  private readonly interval: NodeJS.Timer;
+  private storage: { ip: string; count: number }[] = [];
 
   constructor(windowMs: number) {
     this.windowMs = windowMs;
-    this.storage = [];
-    this.resetTime = calculateNextResetTime(this.windowMs);
 
     this.interval = setInterval(this.resetAll, this.windowMs);
 
@@ -30,41 +13,19 @@ class MemoryIPStore {
     }
   }
 
-  incr = (key: string, cb: Function) => {
-    const indexExists = this.storage.findIndex((item) => item.ip === key);
+  increment(key: string): number {
+    const index = this.storage.findIndex(({ ip }) => ip === key);
 
-    if (indexExists >= 0) {
-      this.storage[indexExists].count += 1;
-    } else {
-      this.storage.push({
-        ip: key,
-        count: 1,
-      });
+    if (index >= 0) {
+      this.storage[index].count += 1;
+      return this.storage[index].count;
     }
 
-    cb(this.storage[indexExists]?.count || 1, this.resetTime);
-  };
+    this.storage.push({ ip: key, count: 1 });
+    return 1;
+  }
 
-  decrement = (key: string) => {
-    const indexExists = this.storage.findIndex((item) => item.ip === key);
-
-    if (indexExists >= 0) {
-      this.storage[indexExists].count -= 1;
-    }
-  };
-
-  resetAll = () => {
+  resetAll() {
     this.storage = [];
-    this.resetTime = calculateNextResetTime(this.windowMs);
-  };
-
-  resetKey = (key: string) => {
-    const indexExists = this.storage.findIndex((item) => item.ip === key);
-
-    if (indexExists >= 0) {
-      this.storage.splice(indexExists, 1);
-    }
-  };
+  }
 }
-
-export default MemoryIPStore;
