@@ -22,6 +22,6 @@ export class AddUserUseCase implements UseCase<Params> {
 
     const { password: pass, ...user } = await this.userRepository.create({ email, password });
 
-    return CreateResponse.ok(user);
+    return CreateResponse.created(user);
   }
 }
