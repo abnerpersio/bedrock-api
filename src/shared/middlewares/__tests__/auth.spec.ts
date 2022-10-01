@@ -4,7 +4,7 @@ import request from 'supertest';
 import { defaultUser } from '@test-utils/fixtures/user';
 import { mockUserModel } from '@test-utils/models/user';
 
-import app from '../../../server';
+import { server } from '../../../server';
 
 describe('Login test', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('Login test', () => {
   });
 
   it('should login correctly', async () => {
-    const response = await request(app)
+    const response = await request(server)
       .post('/login')
       .set('Content-Type', 'application/json')
       .send({
@@ -25,7 +25,7 @@ describe('Login test', () => {
   });
 
   it('should not login with invalid password', async () => {
-    const response = await request(app)
+    const response = await request(server)
       .post('/login')
       .set('Content-Type', 'application/json')
       .send({
@@ -37,7 +37,7 @@ describe('Login test', () => {
   });
 
   it('should not login with invalid login', async () => {
-    const response = await request(app)
+    const response = await request(server)
       .post('/login')
       .set('Content-Type', 'application/json')
       .send({
@@ -48,7 +48,7 @@ describe('Login test', () => {
   });
 
   it('should not authorize users without token', async () => {
-    const response = await request(app).get('/users');
+    const response = await request(server).get('/users');
 
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('authentication token is required');
@@ -57,7 +57,9 @@ describe('Login test', () => {
   it('should not login with invalid token data', async () => {
     jwt.verify = jest.fn().mockReturnValue(null);
 
-    const response = await request(app).get('/users').set('Authorization', 'Bearer invalidtoken');
+    const response = await request(server)
+      .get('/users')
+      .set('Authorization', 'Bearer invalidtoken');
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('invalid authentication');
@@ -68,7 +70,9 @@ describe('Login test', () => {
       throw new Error('invalid_token');
     });
 
-    const response = await request(app).get('/users').set('Authorization', 'Bearer invalidtoken');
+    const response = await request(server)
+      .get('/users')
+      .set('Authorization', 'Bearer invalidtoken');
 
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('invalid authentication');

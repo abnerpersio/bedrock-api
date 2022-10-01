@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { RequestError } from '../errors/request-error';
 import { verifyToken } from '../utils/jwt';
 
-export default function AuthMiddleware(req: Request, res: Response, next: NextFunction) {
+export function AuthMiddleware(req: Request, res: Response, next: NextFunction) {
   const { authorization } = req.headers;
   const token = authorization?.split(' ')[1];
 
