@@ -45,7 +45,7 @@ describe('SecretController', () => {
         key: defaultSecret.key,
       });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.data.name).toBe(defaultSecret.name);
   });
 
@@ -119,7 +119,7 @@ describe('SecretController', () => {
   });
 
   it('should get 404 secrets not found', async () => {
-    Secret.find = jest.fn().mockResolvedValue(null);
+    Secret.find = jest.fn().mockResolvedValue([]);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(server)
