@@ -10,7 +10,7 @@
     "dev": "ts-node-dev --respawn -r tsconfig-paths/register src/index.ts",
     "build": "rimraf dist && node ./esbuild.js",
     "test": "dotenv -e .env.test jest",
-    "test:cov": "jest --bail --coverage --detectOpenHandles --forceExit",
+    "test:cov": "dotenv -e .env.test jest --bail --coverage --detectOpenHandles --forceExit",
     "format": "prettier --write src/**/*.{js,ts}",
     "lint": "eslint src/**/*.{js,ts}",
     "lint:fix": "eslint src/**/*.{js,ts} --fix"
