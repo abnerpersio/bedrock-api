@@ -10,6 +10,14 @@ export class CreateResponse {
     };
   }
 
+  static created(data?: unknown): HttpResponse {
+    return {
+      status: 201,
+      success: true,
+      data,
+    };
+  }
+
   static noContent(): HttpResponse {
     return {
       status: 204,

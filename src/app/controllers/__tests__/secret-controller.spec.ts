@@ -10,9 +10,8 @@ import { mockUserModel } from '@test-utils/models/user';
 
 import { server } from '../../../server';
 import { Safe, Secret } from '../../models';
-import { SafeController } from '../safe-controller';
 
-describe(SafeController.name, () => {
+describe('SecretController', () => {
   beforeEach(() => {
     mockUserModel();
     mockSafeModel();
@@ -46,7 +45,7 @@ describe(SafeController.name, () => {
         key: defaultSecret.key,
       });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body.data.name).toBe(defaultSecret.name);
   });
 
@@ -120,7 +119,7 @@ describe(SafeController.name, () => {
   });
 
   it('should get 404 secrets not found', async () => {
-    Secret.find = jest.fn().mockResolvedValue(null);
+    Secret.find = jest.fn().mockResolvedValue([]);
     const { token } = (await mockAuthTokenRequest()).body.data;
 
     const response = await request(server)

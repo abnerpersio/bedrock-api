@@ -32,7 +32,7 @@ export class SafeRepository {
     });
   }
 
-  async findAllByOwner(owner: string): Promise<Safe[] | null> {
+  async findAllByOwner(owner: string): Promise<Safe[]> {
     return this.safe.find({
       owner,
     });

@@ -13,9 +13,7 @@ export class DeleteUserUseCase implements UseCase<Params> {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(params: Params) {
-    const {
-      auth: { uuid },
-    } = params;
+    const { uuid } = params.auth;
 
     const userExists = await this.userRepository.findByUuid(uuid);
     if (!userExists) throw new RequestError('user not found', 404);
