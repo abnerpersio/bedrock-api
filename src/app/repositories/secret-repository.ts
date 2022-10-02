@@ -21,11 +21,11 @@ export class SecretRepository {
     });
   }
 
-  async findAllByIds(secretsIds?: string[]): Promise<Secret[] | null> {
+  async findAllByIds(secretsIds?: string[]): Promise<Secret[]> {
     return this.secret.find({ _id: { $in: secretsIds } });
   }
 
-  async findAllByOwner({ safeId, owner }: SecretFindByOnwner): Promise<Secret[] | null> {
+  async findAllByOwner({ safeId, owner }: SecretFindByOnwner): Promise<Secret[]> {
     return this.secret.find({
       $or: [{ safe: new mongoose.mongo.ObjectId(safeId) }],
       owner,
